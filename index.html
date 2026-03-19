@@ -957,7 +957,7 @@ footer {
   }
   .edit-sidebar { display: none; }
   .edit-detail {
-    padding: 20px 16px;
+    padding: 20px;
     overflow-y: visible;
     height: auto;
   }
@@ -968,12 +968,11 @@ footer {
   .edit-title { font-size: 1.1rem; }
   .edit-location { font-size: 0.52rem; }
   .code-block {
-  font-size: 0.6rem;
-  overflow-x: visible;
-  white-space: pre-wrap;
-  word-break: break-word;
+    font-size: 0.6rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: pre;
   }
-
   .custom-editor { font-size: 0.65rem; min-height: 120px; }
   .editor-controls { flex-wrap: wrap; }
   .status-row { flex-wrap: wrap; gap: 10px; }
@@ -1548,13 +1547,247 @@ default rsvp_pizzacoffee = None
 default boss_meeting_choice = "none"`
       }
     ]
-  }
+  },
 
 // ── NEXT CHAPTER GOES HERE ────────────────────────────────────────────────────
-// Add a comma after the } above, then paste the new  N: { ... }  block.
-// Also update the <option> tag in the dropdown nav to remove `disabled`.
-// ─────────────────────────────────────────────────────────────────────────────
+  3: {
+    title: "Chapter Three",
+    sub: "Someone New, Standing Still",
+    status: "Audit Complete",
 
+    summary: `Chapter Three earns its ending through accumulation. A full workday — three possible openings depending on the RSVP choice, a morning of deliberate bus-stop reasoning, a user journey map that doubles as Saki's own diagram, a vending machine that will not cooperate, Nagata's daughter standing in a lobby, and a puddle — leads to a pig-shaped cookie pressed into Saki's hand at a bus stop in the rain. The pig charm callback (Harumi noticed it in Chapter One; now she brings a pig cookie because Saki always looks too serious) is the chapter's structural peak and is handled with the restraint it deserves. The user journey map — Notice, Interest, Habit, Attachment, Fear of Loss — is the best piece of writing in the project so far. The chapter's recurring problem is Saki explaining her own avoidance: several moments that should land through behavior are partially named. The edits trim those without touching anything structural.`,
+
+    vibe: ["Notice. Interest. Habit. Attachment.", "Fear of Loss."],
+    vibeAttr: "Nagata / the slide — label ch03_user_journey_map / the chapter's structural center",
+
+    tally: { cut: 11, rewrite: 8, added: 0 },
+
+    structural: `Sound. No label changes or branch logic changes required. One dead-code branch in the harumi_apology_count conditional simplified. Clack placeholder text (x's) at bus stop flagged for asset pass — not a structural issue.`,
+
+    textures: [
+      {
+        num: "01",
+        name: "The Vending Machine",
+        pull: "I deliver a flat-palmed slap fueled by quiet spite. / The drink slides a millimeter. / So it's personal...",
+        body: "Four menus stacked. Escalating physical commitment to a drink that may not be worth it. No punchline — just Saki and an object in a disagreement neither of them will win cleanly. The gag earns itself because it never comments on itself. Protect every beat."
+      },
+      {
+        num: "02",
+        name: "The Doorknob",
+        pull: "My hand tightens on the knob like I'm trying to make that true.",
+        body: "Saki tells herself she takes this bus route because it's the easiest way home. Her hand tightens on the doorknob as she thinks it. The physical detail contradicts the internal rationalization without naming the contradiction. One line carrying everything."
+      },
+      {
+        num: "03",
+        name: "The Pig Cookie in the Bag",
+        pull: "I tuck the cookie carefully into my bag, like it might break if I move too fast.",
+        body: "She's been carrying a small pig charm on her bag since before she met Harumi. Now she carries a pig cookie home like it's something fragile. No comment. No awareness. This is the chapter's emotional close, and it arrives through a single physical action. Do not touch it."
+      }
+    ],
+
+    milestoneIntro: `Chapter Three is the point economy's most complex chapter so far. Multiple NagataPoints opportunities accumulate toward his Ch11 letter threshold. The user journey map awards both WorkPoints and SakiGrowthPoints simultaneously depending on framing — the only chapter where those two tracks are earned in the same scene. HarumiPoints cap is modest this chapter; the pig cookie and puddle scenes are about texture, not points.`,
+
+    milestones: [
+      { name: "HarumiPoints", range: "0 → max 2 this chapter", pct: 14, color: "bf-rose", note: "Puddle retaliate (+1)   /   'I'm still thinking about it' at bedtime (+1)" },
+      { name: "SakiGrowthPoints", range: "multiple gains", pct: 22, color: "bf-gold", note: "Admit hoping to see Harumi (+1)   /   Kana greeting (+1)   /   Engage emotional framing (+1)   /   Home check-in with Nagata (+0.5)   /   Puddle retaliate (+1)   /   Bedtime reflection (+1)" },
+      { name: "WorkPoints", range: "0 → max 3 this chapter", pct: 20, color: "bf-dim", note: "Pizza party attendance (+1)   /   Engage emotional framing (+1)   /   Treat as deliverables (+1)" },
+      { name: "NagataPoints", range: "0 → max 3 this chapter", pct: 20, color: "bf-sage", note: "Snack thanks (+1)   /   Home check-in question (+1)   /   Engage emotional framing (+1)" },
+      { name: "kana_approval", range: "flag — True / False", pct: 0, color: "bf-sage", note: "Simple polite greeting → True   /   Seeds Ch11 Kana memory callback" }
+    ],
+
+    devnote: `Three expression tag fixes needed before Ch03 ships: 'soft smile' → 'soft_smile' (underscore) at three points in the Kana lobby scene. Duplicate 's' prefix on line 227 ('s s w neutral' → 's h neutral'). Setting fix on line 1242 ('s w tired' → 's h tired') and line 227 (home scene, not work scene). Duplicate 'show h u neutral' at bus stop — remove the second call. Two spelling errors: 'lavendar' → 'lavender' and 'reluctanctly' → 'reluctantly'. Clack placeholder text (x's at the bus stop) needs real content for asset pass. Music at line 900 uses a direct string path rather than a named alias — align with audio_setup.rpy. The apology-count conditional has dead code — the '== 3' branch will never fire after line 1015; simplify to '>= 4'.`,
+
+    edits: [
+      {
+        name: "\"Future Me Made a Choice\"",
+        location: "label ch03_evening_no_email",
+        reason: "Saki wouldn't narrate her own avoidance with wry self-awareness. She acts. The coat being already on says everything — the commentary undercuts it.",
+        before: `n_f "My coat is already on."
+si_f "Future me made a choice, apparently."
+n_f "I slip out before anyone notices."`,
+        after: `n_f "My coat is already on."
+n_f "I slip out before anyone notices."`
+      },
+      {
+        name: "\"Dodged That One\" / \"Made the Right Call\"",
+        location: "label ch03_evening_no_email and ch03_evening_declined",
+        reason: "Post-hoc self-congratulation. Saki doesn't issue verdicts on her own choices. She makes them and moves.",
+        before: `si_f "Dodged that one."`,
+        after: `si_f "Cold out."`
+      },
+      {
+        name: "\"Legally Allowed to Leave\"",
+        location: "label ch03_pizza_party",
+        reason: "The contract framing is Saki — behavioral, self-imposed. The legal escalation is a quip. Cut the second line to keep the first.",
+        before: `si_f "Two slices. That's the contract."
+si_f "Two slices and I'm legally allowed to leave."`,
+        after: `si_f "Two slices. That's the contract."
+si_f "Two slices, and I've fulfilled my end."`
+      },
+      {
+        name: "\"Something That Probably Isn't Funny\"",
+        location: "label ch03_pizza_party",
+        reason: "Saki notices volume, not social quality. She doesn't assess whether the laugh was warranted.",
+        before: `n_f "Someone laughs too loud at something that probably isn't funny."`,
+        after: `n_f "Someone laughs too loud down the far end of the room."`
+      },
+      {
+        name: "Bus Stop Internal Monologue",
+        location: "label ch03_pizza_party — before Morgan interrupts",
+        reason: "The self-interrupt is right in structure but shows too much. 'And even if she is, so what?' and 'It's a bus stop. Not a—' are performed denials, not genuine ones. The interrupt should feel like catching herself mid-thought, not completing the thought before cutting it off.",
+        before: `si_f "If I left now, I could catch the 6:20 bus."
+si_f "Stop."
+si_f "She's probably not even there tonight."
+si_f "And even if she is, so what?"
+si_f "It's a bus stop. Not a—"
+si_f "Just eat your pizza."`,
+        after: `si_f "If I left now, I could catch the 6:20 bus."
+si_f "..."
+si_f "Just eat your pizza."`
+      },
+      {
+        name: "\"Which Is Hilarious, Considering\"",
+        location: "label officearrival_day03 — empathy map slide",
+        reason: "Cultural self-irony. Saki doesn't find things 'hilarious.' She notices the gap between what the slide asks and what she can answer.",
+        before: `n "We're supposed to map how people feel at every step."
+n "Which is hilarious, considering."`,
+        after: `n "We're supposed to map how people feel at every step."
+n "I stare at the slide for a moment."`
+      },
+      {
+        name: "User Journey Map — Explicit Payoff Lines",
+        location: "label ch03_user_journey_map — lines 511 and 559",
+        reason: "Both lines name what the diagram already shows. 'Notice. Interest. Habit. Attachment. Fear of Loss.' does this work without any help. The narrator explaining the metaphor undercuts the beat entirely. Both lines removed.",
+        before: `n "It looks uncomfortably like a diagram of someone falling for something they never planned to."
+window hide
+stop music fadeout 1.5
+pause 1.5
+jump meetingroom_usermap_02`,
+        after: `window hide
+stop music fadeout 1.5
+pause 1.5
+jump meetingroom_usermap_02`
+      },
+      {
+        name: "\"Am I Hoping to See Her?\"",
+        location: "label vending_gag_done — end of day",
+        reason: "Saki asking herself about her feelings is more introspection than she'd allow. She'd catch herself moving faster, not examine the motivation.",
+        before: `si "…I wonder if she'll be at the bus stop."
+pause 1.0
+s w annoyed "..."
+si "Am I hoping to see her?"`,
+        after: `si "…I wonder if she'll be at the bus stop."
+pause 1.0
+s w annoyed "..."`
+      },
+      {
+        name: "\"Deserves Jail Time\"",
+        location: "label splash_scene — bus stop ad panel",
+        reason: "Cultural snark with a verdict. Saki observes specific design failures, not issues sentences.",
+        before: `n "An ad panel glows behind the bench—neon gradient, six different fonts wrestling for attention."
+si "Whoever approved that header deserves jail time."`,
+        after: `n "An ad panel glows behind the bench—neon gradient, six different fonts wrestling for attention."
+si "The kerning alone is a crime."`
+      },
+      {
+        name: "\"I Hear My Own Voice Flatten\"",
+        location: "label splash_scene — 'Long. Loud. Too much.' branch",
+        reason: "Saki monitoring her own vocal delivery in real-time is too self-aware. She'd observe Harumi's response instead.",
+        before: `s u guarded "Long. Loud. Too much."
+n "I hear my own voice flatten as I say it."`,
+        after: `s u guarded "Long. Loud. Too much."
+n "She doesn't push."`
+      },
+      {
+        name: "\"Not Awkward. Just Still.\"",
+        location: "label splash_scene — bridge after puddle laughter",
+        reason: "Saki labeling the emotional quality of a silence. She'd describe what's in it, not categorize it.",
+        before: `n "The laughter fades into something quieter."
+n "Not awkward. Just still."
+n "Rain and bus-engine noise from down the street fill the gap, and neither of us rushes to talk over it."`,
+        after: `n "The laughter fades."
+n "Rain and bus-engine noise from down the street. Neither of us rushes to talk over it."`
+      },
+      {
+        name: "\"Her Standing in a Discount Aisle\"",
+        location: "label splash_scene — pig cookie scene",
+        reason: "Saki constructing a vivid imagined backstory for Harumi's shopping trip is too fond and composed. She'd notice the specific cookie cutter choice without narrating the circumstances behind it.",
+        before: `n "I can see it already: her standing in a discount aisle, pretending it was the least ridiculous choice."`,
+        after: `n "Of all the cookie cutters she could have brought."`
+      },
+      {
+        name: "\"Small Victory\"",
+        location: "label splash_scene — after Harumi presses cookie into Saki's hand",
+        reason: "Saki consciously scoring Harumi's non-apology as a win is too self-aware. She'd notice the absence — not tally it.",
+        before: `si "She's not apologizing for this one."
+si "Small victory."`,
+        after: `si "She's not apologizing for this one."`
+      },
+      {
+        name: "Fish Tank Punchline",
+        location: "label day3_evening_home",
+        reason: "The first line is wistful and character-appropriate. The second undercuts it with a joke. The first beat stands alone.",
+        before: `si "I wonder what it would be like to just float around all day in the same little tank."
+si "…Actually, that's uncomfortably close to having a job."`,
+        after: `si "I wonder what it would be like to just float around all day in the same little tank."`
+      },
+      {
+        name: "Typos (Technical x2)",
+        location: "label ceiling_morning",
+        reason: "Two spelling errors that will render in published game text: 'lavendar' and 'reluctanctly'.",
+        before: `n "The past days have bled together. Work, bus, lavendar umbrella, home."
+n "I crawl out of bed and reluctanctly drag myself to the bathroom."`,
+        after: `n "The past days have bled together. Work, bus, lavender umbrella, home."
+n "I crawl out of bed and reluctantly drag myself to the bathroom."`
+      },
+      {
+        name: "soft smile → soft_smile (Technical x3)",
+        location: "label day3_kana_lobby — lines 851, 867, 883",
+        reason: "Expression tag missing underscore will not resolve to the defined sprite expression. Three instances, all flagged in the script's own comments.",
+        before: `s w soft smile "Hey. Nice to meet you."
+s w soft smile "Thanks, Kana."
+s w soft smile "Yeah. See you."`,
+        after: `s w soft_smile "Hey. Nice to meet you."
+s w soft_smile "Thanks, Kana."
+s w soft_smile "Yeah. See you."`
+      },
+      {
+        name: "Duplicate Sprite Show (Technical)",
+        location: "label splash_scene — Harumi arrives, lines 936 and 941",
+        reason: "'show h u neutral' is called twice in four lines. The second call is redundant and flagged in the script's own comment.",
+        before: `show h u neutral at center
+with dissolve
+h "Saki!"
+
+# DUPLICATE: show h u neutral already inserted above — remove one of these
+show h u neutral
+with dissolve`,
+        after: `show h u neutral at center
+with dissolve
+h "Saki!"`
+      },
+      {
+        name: "Prefix / Setting Fixes (Technical x2)",
+        location: "Line 227 (fish tank) and line 1242 (apartment)",
+        reason: "'s s w neutral' has a duplicate 's' prefix. 's w tired' at the apartment door uses work setting 'w' — should be home setting 'h'. Both flagged in the script's own comments.",
+        before: `s s w neutral "It's too early to feed you. Sorry."
+s w tired "Home."`,
+        after: `s h neutral "It's too early to feed you. Sorry."
+s h tired "Home."`
+      },
+      {
+        name: "Apology Count Dead Code (Technical)",
+        location: "label splash_scene — pig cookie, lines 1129-1132",
+        reason: "After 'That's three' fires at the puddle (line 1015), the count is at 3. The pig cookie apology increments it to 4. The 'if == 3' check will therefore never fire here — it's dead code. Simplify to a single >= 4 branch.",
+        before: `if harumi_apology_count == 3:
+    si "That's three..."
+elif harumi_apology_count >= 4:
+    si "That's four..."`,
+        after: `if harumi_apology_count >= 4:
+    si "That's four..."`
+      }
+    ]
+  }
 };
 
 // ── CHAPTER SWITCHER ──────────────────────────────────────────────────────────
