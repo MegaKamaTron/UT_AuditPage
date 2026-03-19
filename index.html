@@ -1875,7 +1875,2712 @@ function buildMilestones(milestones, intro, devnote) {
     </div>
   `).join('');
   document.getElementById('devnote').innerHTML = `<span class="devnote-lbl">Developer Note</span>${devnote}`;
+},
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Umbrella Theory — Chapter Bible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #131313;
+  --bg-card:    #1a1a1a;
+  --bg-inset:   #0f0f0f;
+  --bg-code:    #161b22;
+  --border:     #272727;
+  --border-hi:  #3a3a3a;
+  --text:       #c9c3b9;
+  --text-dim:   #68635e;
+  --text-faint: #38342f;
+  --rose:       #c4876a;
+  --rose-dim:   #6b3f28;
+  --rose-bg:    #1e1410;
+  --sage:       #7a9c86;
+  --sage-dim:   #3a5242;
+  --sage-bg:    #111a14;
+  --gold:       #c9a96e;
+  --gold-dim:   #6b5228;
+  --gold-bg:    #1a160d;
+  --blue:       #7a9cbc;
+  --blue-dim:   #2d4a62;
+  --blue-bg:    #0d1520;
+  --serif: 'EB Garamond', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+  --tab-h: 48px;
 }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  line-height: 1.7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── MASTHEAD ─────────────────────────────────── */
+.masthead {
+  border-bottom: 1px solid var(--border);
+  padding: 36px 60px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-shrink: 0;
+}
+.masthead-left { display: flex; flex-direction: column; gap: 4px; }
+.series-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.chapter-title { font-size: 2.2rem; font-weight: 400; line-height: 1.15; }
+.chapter-sub { font-size: 0.95rem; font-style: italic; color: var(--rose); margin-top: 2px; }
+.masthead-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  padding-bottom: 16px;
+}
+.status-badge {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sage);
+  background: var(--sage-bg);
+  border: 1px solid var(--sage-dim);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+/* Chapter dropdown nav */
+.chapter-nav-wrap { position: relative; display: inline-flex; align-items: center; }
+.chapter-nav-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-right: 10px;
+}
+.chapter-nav {
+  appearance: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 6px 32px 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  min-width: 160px;
+}
+.chapter-nav:focus { border-color: var(--rose-dim); }
+.chapter-nav-arrow {
+  pointer-events: none;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.55rem;
+  color: var(--text-dim);
+}
+.chapter-nav option:disabled { color: var(--text-faint); }
+
+/* ── TAB BAR ──────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+  padding: 0 60px;
+  background: var(--bg);
+  flex-shrink: 0;
+  gap: 0;
+  overflow-x: auto;
+}
+.tab-btn {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 14px 20px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  position: relative;
+  top: 1px;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+
+/* ── PANELS ───────────────────────────────────── */
+.panel { display: none; flex: 1; overflow-y: auto; }
+.panel.active { display: block; }
+
+/* Placeholder panel */
+.panel-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+}
+.placeholder-title {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-style: italic;
+  color: var(--text-faint);
+}
+.placeholder-sub {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ── SHARED SECTION STYLES ────────────────────── */
+.section-wrap { padding: 52px 60px; max-width: 1400px; }
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.prose { font-size: 1.02rem; line-height: 1.85; color: var(--text); }
+.prose-dim { font-size: 0.95rem; line-height: 1.85; color: var(--text-dim); }
+.italic { font-style: italic; }
+.accent-rose { color: var(--rose); }
+.accent-sage { color: var(--sage); }
+.accent-gold { color: var(--gold); }
+
+/* ── SUMMARY PANEL ────────────────────────────── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 32px;
+}
+.sg-cell { background: var(--bg); padding: 48px 52px; }
+.sg-cell.inset { background: var(--bg-inset); }
+.blurb { font-size: 1.05rem; font-style: italic; color: var(--rose); line-height: 1.5; margin-bottom: 20px; }
+.vibe-quote {
+  font-size: 2.4rem;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+}
+.vibe-secondary { font-size: 1.7rem; font-style: italic; color: var(--text-dim); margin-top: 4px; }
+.vibe-attr {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-top: 28px;
+}
+.vibe-cell { position: relative; overflow: hidden; }
+.vibe-cell::before {
+  content: '\201C';
+  position: absolute;
+  top: -40px; left: 28px;
+  font-size: 22rem;
+  font-family: var(--serif);
+  color: var(--text-faint);
+  opacity: 0.25;
+  line-height: 1;
+  pointer-events: none;
+}
+.tally-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 32px;
+}
+.tally-cell { background: var(--bg-card); padding: 28px; text-align: center; }
+.tally-num { display: block; font-family: var(--mono); font-size: 2.8rem; line-height: 1; margin-bottom: 8px; }
+.tally-lbl { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+.tc-rose .tally-num { color: var(--rose); }
+.tc-sage .tally-num { color: var(--sage); }
+.tc-gold .tally-num { color: var(--gold); }
+
+/* ── FLAVOR PANEL ─────────────────────────────── */
+.texture-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); margin-top: 32px; }
+.texture-item { padding: 40px 48px; border-bottom: 1px solid var(--border); }
+.texture-item:last-child { border-bottom: none; }
+.texture-num { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em; color: var(--text-faint); margin-bottom: 8px; }
+.texture-name { font-size: 1.2rem; color: var(--sage); margin-bottom: 16px; font-style: italic; }
+.texture-pull {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text);
+  border-left: 2px solid var(--sage-dim);
+  padding-left: 20px;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+
+/* ── MILESTONE PANEL ──────────────────────────── */
+.milestone-list { display: flex; flex-direction: column; gap: 36px; margin-top: 32px; }
+.milestone-row {}
+.milestone-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.milestone-varname { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text); }
+.milestone-range { font-family: var(--mono); font-size: 0.58rem; color: var(--text-faint); }
+.bar-track { width: 100%; height: 2px; background: var(--border); margin-bottom: 8px; }
+.bar-fill { height: 100%; }
+.bf-rose { background: var(--rose); }
+.bf-sage { background: var(--sage); }
+.bf-gold { background: var(--gold); }
+.bf-dim  { background: var(--text-faint); }
+.milestone-note { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); line-height: 1.7; }
+.devnote {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 18px 24px;
+  margin-top: 40px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.devnote-lbl { color: var(--gold); display: block; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+/* ── EDIT SUITE PANEL ─────────────────────────── */
+#panel-edits.active { display: flex; flex-direction: column; height: calc(100vh - 160px); }
+.edit-suite-layout { display: grid; grid-template-columns: 240px 1fr; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.edit-sidebar {
+  background: var(--bg-inset);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+.edit-sidebar-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0 20px 12px;
+}
+.edit-sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s, border-color 0.1s;
+}
+.edit-sidebar-btn:hover { background: rgba(255,255,255,0.03); }
+.edit-sidebar-btn.active {
+  background: rgba(196,135,106,0.06);
+  border-left-color: var(--rose);
+}
+.esb-num {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--text-faint);
+  min-width: 20px;
+  flex-shrink: 0;
+}
+.esb-name {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+.edit-sidebar-btn.active .esb-name { color: var(--rose); }
+.esb-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.edit-sidebar-btn.active .esb-dot { background: var(--rose); }
+
+/* ── COMPLETION STATUS ─────────────────────────────────── */
+.esb-status {
+  font-family: var(--mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.esb-status.open { background: #5a1f1f; color: #e8a09a; border: 1px solid #7a2f2f; }
+.esb-status.done { background: transparent; color: var(--sage); border: 1px solid var(--sage-dim); }
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.status-pill {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 2px;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.status-pill.open { background: #5a1f1f; color: #e8a09a; border: 1px solid #7a2f2f; }
+.status-pill.done { background: transparent; color: var(--sage); border: 1px solid var(--sage-dim); }
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.status-toggle-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 2px solid var(--sage-dim);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.status-toggle:hover .status-toggle-box { border-color: var(--sage); }
+.status-toggle-box.checked { background: var(--sage); border-color: var(--sage); }
+.status-toggle-box svg { display: none; }
+.status-toggle-box.checked svg { display: block; }
+.status-toggle-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+.status-toggle:hover .status-toggle-label { color: var(--sage); }
+
+.tab-progress {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  color: var(--text-faint);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  vertical-align: middle;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab-progress.complete { color: var(--sage); border-color: var(--sage-dim); }
+
+/* Edit Detail Panel */
+.edit-detail { overflow-y: auto; padding: 40px 52px; display: flex; flex-direction: column; gap: 32px; }
+.edit-detail-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 300px; gap: 12px;
+  color: var(--text-faint); font-style: italic;
+}
+.edit-header { display: flex; align-items: baseline; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.edit-id { font-family: var(--mono); font-size: 0.7rem; color: var(--text-faint); }
+.edit-title { font-size: 1.5rem; font-style: italic; color: var(--text); }
+.edit-location { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); padding: 3px 10px; border-radius: 2px; }
+
+/* Reasoning box */
+.reason-box {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--rose-dim);
+  padding: 20px 24px;
+}
+.reason-box-lbl { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); margin-bottom: 10px; display: block; }
+.reason-text { font-size: 0.95rem; line-height: 1.8; color: var(--text-dim); }
+
+/* Code blocks */
+.code-section { display: flex; flex-direction: column; gap: 8px; }
+.code-section-header { display: flex; align-items: center; justify-content: space-between; }
+.code-badge {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+.badge-before { color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); }
+.badge-after { color: var(--sage); background: var(--sage-bg); border: 1px solid var(--sage-dim); }
+.badge-custom { color: var(--gold); background: var(--gold-bg); border: 1px solid var(--gold-dim); }
+.badge-preview { color: var(--blue); background: var(--blue-bg); border: 1px solid var(--blue-dim); }
+.copy-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.copy-btn:hover { border-color: var(--border-hi); color: var(--text); }
+.copy-btn.copied { border-color: var(--sage-dim); color: var(--sage); }
+.code-block {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: #9db4cc;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-radius: 2px;
+  position: relative;
+}
+.code-block.before-block { border-left: 3px solid var(--text-faint); }
+.code-block.after-block  { border-left: 3px solid var(--sage); color: #aecab8; }
+
+/* Syntax highlighting hints */
+.rpy-narrator { color: #9db4cc; font-style: italic; }
+.rpy-internal { color: #c9b4a0; font-style: italic; }
+.rpy-dialogue { color: #b8d4b8; }
+.rpy-keyword  { color: #c9a96e; }
+.rpy-comment  { color: #4a5568; font-style: italic; }
+
+/* Custom editor */
+.custom-editor {
+  width: 100%;
+  min-height: 180px;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold-dim);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.8;
+  padding: 18px 20px;
+  resize: vertical;
+  outline: none;
+  border-radius: 2px;
+  transition: border-color 0.15s;
+}
+.custom-editor:focus { border-color: var(--gold); }
+.editor-controls { display: flex; align-items: center; gap: 10px; }
+.preview-btn {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-dim);
+  color: var(--blue);
+  padding: 6px 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 0.15s;
+}
+.preview-btn:hover { border-color: var(--blue); }
+.load-after-btn {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 6px 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+.load-after-btn:hover { border-color: var(--sage-dim); color: var(--sage); }
+.editor-hint { font-family: var(--mono); font-size: 0.58rem; color: var(--text-faint); }
+
+/* VN Preview — textbox layout */
+.vn-preview {
+  background: transparent;
+  border: none;
+  min-height: 140px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+/* Scene area — narrator lines float above the box */
+.vn-scene-area {
+  padding: 12px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 40px;
+}
+/* The actual VN dialogue box */
+.vn-box {
+  border: 1.5px solid rgba(200,195,185,0.35);
+  background: transparent;
+  padding: 28px 24px 20px;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+/* Nameplate — solid color block, centered at top of box */
+.vn-nameplate {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 3px 18px;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+.np-saki     { background: #2a3550; color: #a8bcd8; }
+.np-internal { background: #2a1f14; color: #c9b4a0; font-style: italic; }
+.np-nagata   { background: #162414; color: #8cb89a; }
+.np-harumi   { background: #221a32; color: #b49ad4; }
+.np-boss     { background: #2a1414; color: #c8908a; }
+.np-other    { background: #202020; color: #a0a0a0; }
+/* Dialogue text inside the box */
+.vn-box-text {
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text);
+  text-align: left;
+}
+.vn-box-text.italic { font-style: italic; color: #c9b4a0; }
+/* Narrator lines in scene area */
+.vn-narrator-line {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+/* Choice buttons */
+.vn-choice { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.vn-choice-btn {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border-hi);
+  padding: 7px 14px;
+  text-align: left;
+  cursor: default;
+  border-radius: 2px;
+}
+.vn-empty { color: var(--text-faint); font-style: italic; font-size: 0.85rem; text-align: center; padding: 32px 0; }
+
+/* ── MOOD TAGS ─────────────────────────────────── */
+.mood-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.mood-label {
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-right: 2px;
+}
+.mood-tag {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--rose);
+  border: 1px solid var(--rose-dim);
+  background: var(--rose-bg);
+  padding: 3px 10px 3px 10px;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.mood-tag-remove {
+  background: none;
+  border: none;
+  color: var(--rose-dim);
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+.mood-tag-remove:hover { color: var(--rose); }
+.mood-add-btn {
+  width: 22px; height: 22px;
+  border-radius: 2px;
+  border: 1px dashed var(--border-hi);
+  background: none;
+  color: var(--text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.mood-add-btn:hover { border-color: var(--rose-dim); color: var(--rose); }
+.mood-input-wrap {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+.mood-input-wrap.open { display: flex; }
+.mood-input {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  background: var(--bg-code);
+  border: 1px solid var(--rose-dim);
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 2px;
+  outline: none;
+  width: 100px;
+}
+
+/* ── NOTES BOX ─────────────────────────────────── */
+.notes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-lbl {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.notes-saved {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  color: var(--sage);
+  opacity: 0;
+  transition: opacity 0.3s;
+  letter-spacing: 0.1em;
+}
+.notes-saved.show { opacity: 1; }
+.notes-editor {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--text-faint);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 12px 16px;
+  resize: vertical;
+  outline: none;
+  border-radius: 2px;
+  transition: border-color 0.15s;
+}
+.notes-editor:focus { border-left-color: var(--gold); }
+
+/* Progress pill for edit suite */
+.edit-progress {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--text-faint);
+  letter-spacing: 0.15em;
+}
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ── FOOTER ───────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.footer-l { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+.footer-r { font-family: var(--serif); font-size: 0.85rem; font-style: italic; color: var(--text-faint); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ── SYNC TOOLBAR ─────────────────────────────── */
+.sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 60px;
+  background: var(--bg-inset);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.sync-bar-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-right: 4px;
+}
+.sync-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border-hi);
+  color: var(--text-dim);
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+.sync-btn:hover { border-color: var(--rose-dim); color: var(--rose); }
+.sync-btn.primary { border-color: var(--sage-dim); color: var(--sage); }
+.sync-btn.primary:hover { border-color: var(--sage); background: var(--sage-bg); }
+.sync-import-wrap {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+.sync-import-wrap.open { display: flex; }
+.sync-input {
+  flex: 1;
+  background: var(--bg-code);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  padding: 6px 10px;
+  border-radius: 2px;
+  outline: none;
+}
+.sync-input:focus { border-color: var(--rose-dim); }
+.sync-toast {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--sage);
+  opacity: 0;
+  transition: opacity 0.3s;
+  letter-spacing: 0.1em;
+}
+.sync-toast.show { opacity: 1; }
+
+/* ── MOBILE EDIT SELECTOR ─────────────────────── */
+.mobile-edit-nav {
+  display: none;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-inset);
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.mobile-edit-select {
+  flex: 1;
+  appearance: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 8px 32px 8px 12px;
+  border-radius: 2px;
+  outline: none;
+}
+.mobile-edit-status {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* ── MOBILE RESPONSIVE ────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Masthead */
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 20px 0;
+    gap: 12px;
+  }
+  .masthead-right {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 14px;
+    width: 100%;
+  }
+  .chapter-title { font-size: 1.7rem; }
+  .chapter-nav-label { display: none; }
+  .masthead-center { display: none !important; }
+
+  /* Sync bar */
+  .sync-bar { padding: 10px 20px; }
+
+  /* Tab bar */
+  .tab-bar {
+    padding: 0 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-size: 0.5rem;
+    padding: 12px 14px 10px;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  /* Panels */
+  .section-wrap { padding: 24px 20px; }
+
+  /* Summary grid — single column */
+  .summary-grid {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+  .sg-cell { padding: 28px 24px; }
+  .vibe-quote { font-size: 1.5rem; }
+  .vibe-secondary { font-size: 1.1rem; }
+  .vibe-cell::before { font-size: 10rem; top: -16px; left: 12px; }
+
+  /* Texture list */
+  .texture-item { padding: 28px 20px; }
+
+  /* Edit suite — sidebar hidden, replaced by mobile dropdown */
+  #panel-edits.active { height: auto; min-height: 0; }
+  .edit-suite-layout {
+    grid-template-columns: 1fr;
+    overflow: visible;
+    height: auto;
+  }
+  .edit-sidebar { display: none; }
+  .edit-detail {
+    padding: 20px;
+    overflow-y: visible;
+    height: auto;
+  }
+  .mobile-edit-nav { display: flex; }
+
+  /* Edit detail content */
+  .edit-header { flex-wrap: wrap; gap: 8px; }
+  .edit-title { font-size: 1.1rem; }
+  .edit-location { font-size: 0.52rem; }
+  .code-block {
+    font-size: 0.6rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: pre;
+  }
+  .custom-editor { font-size: 0.65rem; min-height: 120px; }
+  .editor-controls { flex-wrap: wrap; }
+  .status-row { flex-wrap: wrap; gap: 10px; }
+
+  /* Footer */
+  footer {
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .chapter-title { font-size: 1.4rem; }
+  .tally-cell { padding: 16px 8px; }
+  .tally-num { font-size: 2rem; }
+  .tab-btn { font-size: 0.46rem; padding: 12px 10px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-left">
+    <span class="series-label">Umbrella Theory &mdash; Chapter Bible</span>
+    <h1 class="chapter-title" id="current-chapter-title">Chapter One</h1>
+    <span class="chapter-sub" id="current-chapter-sub">Another Commute</span>
+  </div>
+  <div class="masthead-right">
+    <span class="status-badge" id="status-badge">Audit Complete</span>
+    <div class="chapter-nav-wrap">
+      <span class="chapter-nav-label">Jump to</span>
+      <select class="chapter-nav" id="chapterNav" onchange="switchChapter(this.value)">
+        <option value="1">Chapter 01 &mdash; Another Commute</option>
+        <option value="2">Chapter 02 &mdash; Still Raining</option>
+        <option value="3" disabled>Chapter 03 &nbsp; (pending)</option>
+        <option value="4" disabled>Chapter 04 &nbsp; (pending)</option>
+        <option value="5" disabled>Chapter 05 &nbsp; (pending)</option>
+        <option value="6" disabled>Chapter 06 &nbsp; (pending)</option>
+        <option value="7" disabled>Chapter 07 &nbsp; (pending)</option>
+        <option value="8" disabled>Chapter 08 &nbsp; (pending)</option>
+        <option value="9" disabled>Chapter 09 &nbsp; (pending)</option>
+        <option value="10" disabled>Chapter 10 &nbsp; (pending)</option>
+        <option value="11" disabled>Chapter 11 &nbsp; (pending)</option>
+        <option value="12" disabled>Chapter 12 &nbsp; (pending)</option>
+        <option value="13" disabled>Chapter 13 &nbsp; (pending)</option>
+        <option value="14" disabled>Chapter 14 &nbsp; (pending)</option>
+      </select>
+      <span class="chapter-nav-arrow">&#9660;</span>
+    </div>
+  </div>
+</header>
+
+<!-- TAB BAR -->
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" onclick="switchTab('summary')">Summary</button>
+  <button class="tab-btn" onclick="switchTab('flavor')">Flavor &amp; Friction</button>
+  <button class="tab-btn" onclick="switchTab('milestone')">Milestone Map</button>
+  <button class="tab-btn" onclick="switchTab('edits')">Edit Suite <span class="tab-progress" id="edit-progress-pill"></span></button>
+</nav>
+
+<!-- SYNC TOOLBAR -->
+<!-- This bar lets you export/import completion state across devices.          -->
+<!-- "Export" copies a compact string. "Import" pastes it back.               -->
+<!-- "Save to file" downloads index.html with your progress baked in —        -->
+<!-- push that file to GitHub and both devices will see the same checkboxes.  -->
+<div class="sync-bar">
+  <span class="sync-bar-label">Progress sync</span>
+  <button class="sync-btn primary" onclick="exportState()">Export</button>
+  <button class="sync-btn" onclick="toggleImport()">Import</button>
+  <button class="sync-btn" onclick="saveToFile()">Save to file</button>
+  <span class="sync-toast" id="sync-toast"></span>
+  <div class="sync-import-wrap" id="sync-import-wrap">
+    <input class="sync-input" id="sync-input" placeholder="Paste exported state string here…" />
+    <button class="sync-btn primary" onclick="importState()">Apply</button>
+    <button class="sync-btn" onclick="toggleImport()">Cancel</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- PANEL: SUMMARY                       -->
+<!-- ════════════════════════════════════ -->
+<div class="panel active" id="panel-summary">
+  <div class="section-wrap">
+    <div class="section-label">Chapter Summary</div>
+    <p class="blurb italic">"A woman who has optimized her life for the absence of surprise gets surprised."</p>
+    <p class="prose" id="summary-body"></p>
+
+    <div class="summary-grid" id="summary-grid">
+      <div class="sg-cell">
+        <div class="section-label">The Vibe</div>
+        <div class="vibe-cell">
+          <p class="vibe-quote" id="vibe-line-1"></p>
+          <p class="vibe-secondary" id="vibe-line-2"></p>
+          <p class="vibe-attr" id="vibe-attr"></p>
+          <!-- Mood tags — max 2, 10 chars each, stored per chapter -->
+          <div class="mood-row" id="mood-row">
+            <span class="mood-label">Mood</span>
+            <div id="mood-tags"></div>
+            <button class="mood-add-btn" id="mood-add-btn" onclick="openMoodInput()" title="Add mood tag">+</button>
+            <div class="mood-input-wrap" id="mood-input-wrap">
+              <input class="mood-input" id="mood-input" maxlength="10" placeholder="e.g. heavy" />
+              <button class="sync-btn primary" onclick="addMoodTag()">Add</button>
+              <button class="sync-btn" onclick="closeMoodInput()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-cell inset">
+        <div class="section-label">Audit Tally</div>
+        <div class="tally-row">
+          <div class="tally-cell tc-rose">
+            <span class="tally-num" id="tally-cut"></span>
+            <span class="tally-lbl">Lines Cut</span>
+          </div>
+          <div class="tally-cell tc-sage">
+            <span class="tally-num" id="tally-rewrite"></span>
+            <span class="tally-lbl">Rewritten</span>
+          </div>
+          <div class="tally-cell tc-gold">
+            <span class="tally-num" id="tally-added"></span>
+            <span class="tally-lbl">Added</span>
+          </div>
+        </div>
+        <div style="margin-top:28px">
+          <div class="section-label">Structural Status</div>
+          <p class="prose-dim" id="structural-note"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- PANEL: FLAVOR & FRICTION             -->
+<!-- ════════════════════════════════════ -->
+<div class="panel" id="panel-flavor">
+  <div class="section-wrap">
+    <div class="section-label">Flavor &amp; Friction</div>
+    <p class="prose-dim" style="margin-bottom:28px">Non-essential interactions that deepen Saki's tactile connection to her world. Do not cut these. Do not give them commentary they don't need.</p>
+    <div class="texture-list" id="texture-list"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- PANEL: MILESTONE MAP                 -->
+<!-- ════════════════════════════════════ -->
+<div class="panel" id="panel-milestone">
+  <div class="section-wrap">
+    <div class="section-label">Milestone Map &mdash; Best Ending Progress</div>
+    <p class="prose-dim" style="margin-bottom:28px" id="milestone-intro"></p>
+    <div class="milestone-list" id="milestone-list"></div>
+    <div class="devnote" id="devnote" style="margin-top:40px"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- PANEL: EDIT SUITE                    -->
+<!-- ════════════════════════════════════ -->
+<div class="panel" id="panel-edits">
+  <!-- Mobile only: dropdown replaces sidebar on small screens -->
+  <div class="mobile-edit-nav" id="mobile-edit-nav">
+    <select class="mobile-edit-select" id="mobile-edit-select" onchange="loadEdit(parseInt(this.value))">
+      <option value="">— Select an edit —</option>
+    </select>
+    <span class="mobile-edit-status" id="mobile-edit-status"></span>
+  </div>
+  <div class="edit-suite-layout">
+    <!-- Sidebar (desktop only) -->
+    <aside class="edit-sidebar">
+      <div class="edit-sidebar-label">All Edits &mdash; Ch.01</div>
+      <div id="edit-sidebar-list"></div>
+    </aside>
+    <!-- Detail -->
+    <div class="edit-detail" id="edit-detail">
+      <div class="edit-detail-empty">
+        <span class="placeholder-title">Select an edit</span>
+        <span class="placeholder-sub">Choose from the list on the left</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLACEHOLDER PANEL -->
+<div class="panel" id="panel-placeholder">
+  <div class="panel-placeholder">
+    <p class="placeholder-title" id="ph-title">Chapter not yet available</p>
+    <p class="placeholder-sub">This audit will appear here once complete</p>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-l">Umbrella Theory &mdash; Chapter Bible v1.2</span>
+  <span class="footer-r">the timing feels slightly off</span>
+</footer>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════════════════════════
+// CHAPTERS DATA — one object per audited chapter
+//
+// HOW TO ADD A NEW CHAPTER:
+//   1. After the closing } of the last chapter below, add a comma.
+//   2. Paste the new  N: { ... }  block from Claude's audit output.
+//   3. Find the chapter's <option> in the dropdown nav (search "Chapter 0N")
+//      and remove the `disabled` attribute from that line.
+//   4. Save the file and reload your browser tab.
+//
+// COMPLETION STATE is stored in localStorage — it persists automatically.
+// You do not need to touch any JavaScript when adding a new chapter.
+// ════════════════════════════════════════════════════════════════════════════
+const CHAPTERS = {
+
+// ── CHAPTER 01 ───────────────────────────────────────────────────────────────
+  1: {
+    title: "Chapter One",
+    sub: "Another Commute",
+    status: "Audit Complete",
+    summary: `Chapter One introduces Saki not through what she says about herself, but through what she fixes, avoids, and notices when she should be looking away. An email asking her to redo a week's work. A colleague she feeds coconut water to, more out of not wanting him to die at the desk beside her than out of warmth. A boss whose "family" speech she has committed to memory. A bus she misses by four seconds. And then a woman arriving at a bus stop completely soaked, with the bad timing of someone who was not supposed to matter. The chapter's structural argument is quiet: everything Saki does is designed to minimize contact with the world, and the one moment she abandons that design — tilting an umbrella toward a stranger — is the one the whole story will hinge on. The apartment at the end is the chapter's exhale. The fish. The mug. The crack in the ceiling she has never reported.`,
+    vibe: ["It was full.", "It wasn't."],
+    vibeAttr: "Saki — stay_with_her branch / the chapter's emotional center",
+    tally: { cut: 8, rewrite: 7, added: 2 },
+    structural: "No structural changes required. Branching logic, Nagata payoff, umbrella decision tree, and apartment closing are all sound. These edits address voice drift only.",
+    textures: [
+      {
+        num: "01",
+        name: "The Mousepad",
+        pull: "Before I leave, I notice my mouse pad is slightly crooked. I fix it out of instinct.",
+        body: "This line costs nothing and earns everything. Saki straightens the mousepad on her way out the door of a day that cost her hours she won't get back. The reflex is not about neatness — it is about the one thing she can still control in a space that asked too much of her. Keep this line exactly as written. Protect it from any edit that might try to give it commentary."
+      },
+      {
+        num: "02",
+        name: "The Fish Tank",
+        pull: "Evening. / One turns toward me. Blank eyes. Slow fins. / Must be nice. Doing nothing.",
+        body: "Saki greets her fish before she takes off her coat. She does not find this strange. The envy in \"Must be nice. Doing nothing.\" is the most emotionally honest moment in the apartment scene — not because it is funny, but because it is true and she does not linger on it. One tap of the glass. Flakes in. Move on. This is how she processes the day: small rituals, no dwelling."
+      },
+      {
+        num: "03",
+        name: "The Ceiling Crack",
+        pull: "There's a crack in the ceiling I've never reported to the landlord. / I've gotten used to it.",
+        body: "Newly planted in this audit. Two lines, no thematic signal, no elaboration. It arrives and passes. Saki mentions it the way she mentions anything structural about her apartment — flatly. Its function is not felt in Chapter One. It will be felt much later, when Harumi's absence makes Saki notice the crack again and understand, without naming it, what 'gotten used to' actually cost her."
+      }
+    ],
+    milestoneIntro: "Chapter One establishes the two tracks that will compete across all fourteen days: the slow opening toward Harumi and the tightening grip of work. The choices should feel like instincts, not strategy. The gap between a HarumiPoints player and a WorkPoints player will only become visible in Chapter Seven.",
+    milestones: [
+      { name: "HarumiPoints", range: "0 → max 2 this chapter", pct: 14, color: "bf-rose", note: "Umbrella offer (+1)   /   Staying for the next bus (+1)" },
+      { name: "NagataPoints", range: "0 → max 1 this chapter", pct: 7,  color: "bf-sage", note: "Coconut water (+1) — unlocks boss distraction branch" },
+      { name: "SakiGrowthPoints", range: "0 → max 1.5 this chapter", pct: 10, color: "bf-gold", note: "Coconut water (+0.5)   /   Umbrella offer (+0.5)   /   Leaving on time (+1)" },
+      { name: "WorkPoints", range: "0 → max 2 this chapter", pct: 14, color: "bf-dim",  note: "Staying late for boss (+1)   /   Agreeing to extra work (+1)" }
+    ],
+    devnote: "Asset pass flag: insert a Clack popup (work notification) during the backtocomputer label — a second message from Haruto pinging in while Saki is already heads-down. No new script required. Uses existing popup mechanic. Deepens work-intrusion atmosphere without adding runtime.",
+    edits: [
+      {
+        name: "Haruto's Email",
+        location: "label intro_email",
+        reason: "The email reads as a parody of a bad boss email. 'Yo!', 'way to come in clutch', 'super duper easy', 'design queen' — these are all flagging their own obliviousness rather than simply being oblivious. Real bad emails are flatly incompetent. They don't perform. The rewrite keeps every structural problem intact (asking for a full rework while calling it quick) while dropping the cartoon register.",
+        before: `em "\\n\\n\\n\\n\\nTo: Saki Tanaka (saktan@dayglowdesign.com)\\nFrom: Haruto Kuroda  (harukur@dayglowdesign.com)\\nSubject: Deck Updates!1!\\n\\nHey Saki,\\n\\n Yo! Thanks again for cranking out that presentation last night. Seriously, way to come in clutch.\\n\\nSoooooo, tiny update! The client says the blue theme feels 'too boring.' They want something with more POP. Something that screams, like, 'bold brand synergy.'\\n\\nAnyway, super duper easy. Can you redo the whole deck to match that? Shouldn't take long since the layout's basically done, right? You're the design queen here. Need it by Friday!\\n\\nPreciate' you!\\nLove,\\nHaruto\\n\\np.s. you gotta check out this meme, I DIED\\n"`,
+        after: `em "\\n\\n\\n\\n\\nTo: Saki Tanaka (saktan@dayglowdesign.com)\\nFrom: Haruto Kuroda  (harukur@dayglowdesign.com)\\nSubject: Deck Updates!!\\n\\nHey Saki,\\n\\nThanks again for staying late on that presentation. Really came through for us.\\n\\nSmall update though. Client came back and said the blue reads a little 'flat.' Wants something with more energy. More 'bold brand synergy,' their words not mine.\\n\\nSince the layout's already done it should be a pretty quick turnaround. Can you get a revised version over by Friday? You know this stuff better than I do.\\n\\nThanks,\\nHaruto\\n\\np.s. sent you something. check it when you get a minute\\n"`
+      },
+      {
+        name: "Office Internal Lines",
+        location: "label office_intro",
+        reason: "Four consecutive stock phrases ('feels like an eternity', 'back is killing me', 'staring at this screen for hours', 'running on fumes'). Saki catalogs physical details precisely — she does not label her own exhaustion in clichés. Two lines with one concrete physical anchor each do the same work.",
+        before: `si "It feels like an eternity since I last stood up."
+si "My back is killing me."
+si "I've been staring at this screen for hours."
+si "My brain's running on fumes."`,
+        after: `si "My back started hurting an hour ago. I haven't moved."
+si "I'm still on the same two slides."`
+      },
+      {
+        name: "Nagata's Third-Drafts Line",
+        location: "menu — 'You sound terrible.' branch",
+        reason: "\"And miss the joy of third drafts?\" is a one-liner. It's too self-aware for Nagata's register. The replacement deflects the same way but is grounded in the specific work context, which makes Nagata feel like a real office lifer rather than a sitcom character.",
+        before: `show na surprise onlayer master
+na "And miss the joy of third drafts?"`,
+        after: `show na surprise onlayer master
+na "And leave you alone with the Henderson revisions?"`
+      },
+      {
+        name: "\"He's Going to Die at His Desk\"",
+        location: "menu — 'You sound terrible.' branch",
+        reason: "Two lines where one does the job. \"He's going to die right here at his desk\" is theatrical framing for the joke. \"And I'll have to finish his slides\" is the joke, and it's already dark enough on its own. Trust it.",
+        before: `si "He's going to die right here at his desk."
+si "And I'll have to finish his slides."`,
+        after: `si "And I'll have to finish his slides."`
+      },
+      {
+        name: "\"Heart in the Right Place\"",
+        location: "label ch01_backtowork — after coconut water spill",
+        reason: "Saki does not issue verdicts about people's hearts. That's a narrator intruding with warmth Saki wouldn't let herself feel consciously. The replacement describes the effect on Saki without naming its cause — which is the more honest version of how her avoidance works.",
+        before: `n "I want to be more annoyed with him, but I can't deny the fact his heart is in the right place."`,
+        after: `n "He's irritating in a way that doesn't quite stick."`
+      },
+      {
+        name: "Nagata's \"Amirite\"",
+        location: "label ch01_backtowork",
+        reason: "Nagata reads as a late-40s office lifer. He does not use internet shorthand. The warmth and the slight obliviousness survive the rewrite; the register becomes consistent with who he is.",
+        before: `na "Well, good thing the boss has his best folks on the job, amirite?"`,
+        after: `na "Well. At least they put someone who knows what they're doing on it."`
+      },
+      {
+        name: "\"It's Never Great When Bosses Say 'Family'\"",
+        location: "boss hallway encounter",
+        reason: "This line is a recognizable piece of workplace cultural commentary. Saki does not observe culture — she observes patterns in her immediate environment. \"Same speech. Different month.\" is something she'd actually track. It comes from memory, not analysis.",
+        before: `bo "And remember, we're a family here."
+s w awkward "Sure are."
+bo "Family sticks together when times get tough!"
+si "It's never great when bosses say 'family.'"`,
+        after: `bo "And remember, we're a family here."
+s w awkward "Sure are."
+bo "Family sticks together when times get tough!"
+si "Same speech. Different month."`
+      },
+      {
+        name: "\"Itty Bitty Tiny Things\"",
+        location: "boss hallway encounter — menu prompt",
+        reason: "Stripping the performance from the boss makes him more uncomfortable, not less. Cartoonish enthusiasm is easy to dismiss. Quiet, professional coercion — the same ask delivered flatly — is the version Saki can't deflect as cleanly.",
+        before: `bo "So! What do you say, Tanaka? A couple more things? Itty bitty tiny things. Time'll fly by."`,
+        after: `bo "So. What do you say, Tanaka? Just a couple things. Shouldn't take long."`
+      },
+      {
+        name: "\"Maybe You Can Pay Me in Time\" — Wrong Branch",
+        location: "WorkPoints fallback under 'I really need to go' branch",
+        reason: "In the WorkPoints fallback branch, this line is spoken aloud as dialogue (s). The boss then laughs and says 'No wonder they say you're hilarious,' which frames Saki as a known office comedian. This contradicts her character entirely. Move the line to internal monologue. Remove the boss's reward.",
+        before: `s w neutral "Maybe you can pay me in time."
+bo "Hah! No wonder they say you're hilarious!"`,
+        after: `si "Maybe you can pay me in time."
+bo "Head out when you're done. Plenty more to do tomorrow."`
+      },
+      {
+        name: "Triple Avoidance Monologue",
+        location: "label leavingoffice_01 — exterior street",
+        reason: "The first two lines explain the avoidance. The third line is the avoidance. When you have one line doing the work and two lines explaining it, cut the explanation. 'I want to get home' is specific enough to carry the weight of all three.",
+        before: `si "If I slow down, I'll think."
+si "And I really don't want to think right now."
+si "I want to get home."`,
+        after: `si "I want to get home."`
+      },
+      {
+        name: "\"Rough Day for Everyone\"",
+        location: "label busstop_01 — Harumi arrives",
+        reason: "Saki makes concrete observations, not philosophical ones. 'Rough day for everyone, it seems' is a soft generalization — the kind of line a narrator uses to create sympathy. Saki would notice the timing, not the sentiment. The replacement is also more useful dramatically: it establishes that Saki is paying attention to Harumi before she consciously decides to.",
+        before: `si "Rough day for everyone, it seems."`,
+        after: `si "She missed it by about three seconds."`
+      },
+      {
+        name: "\"The Kind That Says\"",
+        location: "label stay_with_her",
+        reason: "The parenthetical 'The kind that says she didn't expect anyone to stay' is the narrator explaining the moment to a reader who didn't get it. The player will get it from the context. Trust them. One blink. Move on.",
+        before: `n "She blinks once, surprised. The kind that says she didn't expect anyone to stay."`,
+        after: `n "She blinks once."`
+      },
+      {
+        name: "Apartment Opener",
+        location: "label apartment_scene",
+        reason: "'My apartment greets me with the same quiet warmth it always has' is careful, literary, aware. Saki is not careful with her feelings — she avoids them. The replacement says the same thing (unchanged space as comfort) without the narrator performing warmth that Saki wouldn't consciously register.",
+        before: `n "My apartment greets me with the same quiet warmth it always has."`,
+        after: `n "The apartment is exactly as I left it."`
+      },
+      {
+        name: "Ceiling Crack — NEW ADDITION",
+        location: "label apartment_scene — ceilingnight scene",
+        reason: "Per project notes, this detail belongs in Chapter One. It is the planted mirror for Saki's eventual feeling about Harumi's absence. It must arrive now — flat, practical, and without elaboration — so the callback in a later chapter has something to land on. Two lines only. No thematic signal. It should read exactly like the mug description that follows it.",
+        before: `n "The rain outside taps against the window in soft, uneven patterns."
+n "On the windowsill, there's a small ceramic mug I never use."`,
+        after: `n "The rain outside taps against the window in soft, uneven patterns."
+n "There's a crack in the ceiling I've never reported to the landlord."
+n "I've gotten used to it."
+n "On the windowsill, there's a small ceramic mug I never use."`
+      },
+      {
+        name: "Closing Bedroom — Redundancy",
+        location: "label apartment_scene — end",
+        reason: "'Long day. I'm tired.' says what the chapter has already shown. The spoken line 'I need sleep' is the right place to end — functional, slightly vulnerable, from character voice rather than pure interiority. Remove the middle line.",
+        before: `si "...That's it."
+si "Long day. I'm tired."
+s s h tired "I need sleep."`,
+        after: `si "...That's it."
+s s h tired "I need sleep."`
+      }
+    ]
+  },
+
+// ── CHAPTER 02 ───────────────────────────────────────────────────────────────
+// ↑ Add comma after the previous chapter's closing } then paste new block here.
+
+  2: {
+    title: "Chapter Two",
+    sub: "Still Raining",
+    status: "Audit Complete",
+
+    summary: `Chapter Two is a chapter about the weight of a day that keeps adding to itself. Saki moves through a morning of deliberate avoidance — Aya's texts, the fish, the coconut coffee — into an office that promptly announces everything is worse than yesterday. The boss meltdown is the chapter's comic set piece, but it's played correctly: the chaos lands and disappears, and what's left is Nagata eating a snack bar and Saki staring at the same deck. The second Harumi encounter is earned by the chapter's pacing — she arrives not as relief but as interruption, and the conversation that follows is the chapter's most delicate work. The apartment close — sketchpad unmoved, tea gone cold, documentary unwatched — is the chapter's true ending. The therapy session is a structural extension into Day 3 and should be confirmed as intentional before final lock.`,
+
+    vibe: ["I forget about the mug until the tea is too strong.", "…It's fine."],
+    vibeAttr: "Narrator / Saki — label apartment_02 / the chapter's real ending",
+
+    tally: { cut: 9, rewrite: 6, added: 2 },
+
+    structural: `Sound. No label changes, no branching changes. One timeline question to confirm with K-Bar: therapy is set to 'Tomorrow, 6:00 PM' in the reminder, placing it in Day 3. The chapter currently runs through it after the Day 2 apartment close. Likely intentional — confirm before lock.`,
+
+    textures: [
+      {
+        num: "01",
+        name: "The Elevator Button",
+        pull: "The tilt is small, but it feels like it's gaining power. / I could fix it. I could just… twist it. A little. / ... / I don't, obviously.",
+        body: "Saki stares down a crooked button and does nothing. The fact that she narrates the urge before deciding against it is the scene's entire argument — she knows exactly what she wants to do and refuses to do it in the same breath. Trim the surrounding internal monologue but protect the action beat itself."
+      },
+      {
+        num: "02",
+        name: "The Sketchpad on the Couch",
+        pull: "My sketchpad is taking up half the cushion. / I move it to the coffee table without opening it.",
+        body: "The sketchpad exists on the couch because it lives there. Saki doesn't open it. She moves it to make room and that's the end of its presence in the chapter. No internal comment. No explanation of why she doesn't draw. This is the correct amount of attention to give it — exactly as much as a person gives to an object they've stopped seeing."
+      },
+      {
+        num: "03",
+        name: "The Tea Gone Cold",
+        pull: "I set the mug on top of the sketchpad. / ... / I forget about the mug until the tea is too strong.",
+        body: "The mug goes on the sketchpad — a creative tool becomes a coaster. Then she forgets it. Then it's too strong and she drinks it anyway: 'It's fine.' This is the most compressed version of Saki's avoidance pattern in the entire chapter. Protect every word of this sequence."
+      }
+    ],
+
+    milestoneIntro: `Chapter Two establishes the secondary relationship tracks alongside Harumi: Aya's avoidance thread gets its first active assignments, Fernando enters the economy, and the therapy session seeds SakiGrowthPoints across a wide range of small choices. The HarumiPoints ceiling this chapter is notably high — the 'Why that kind of work?' choice awards +2, the largest single-choice jump so far.`,
+
+    milestones: [
+      { name: "HarumiPoints", range: "0 → max 4 this chapter", pct: 28, color: "bf-rose", note: "Bus stop conversation (+1)   /   'Why that kind of work?' (+2)   /   Mention her in therapy (+1)" },
+      { name: "SakiGrowthPoints", range: "multiple small gains", pct: 20, color: "bf-gold", note: "Therapy responses (+0.5–1)   /   Aya text (+1)   /   Nagata empathy (+0.5)   /   Bodega honesty (+0.5)" },
+      { name: "WorkPoints", range: "0 → max 2 this chapter", pct: 14, color: "bf-dim", note: "RSVP yes to HR event (+1)   /   Boss meeting: confident (+1)" },
+      { name: "AyaAvoidance", range: "0 → max 2 this chapter", pct: 14, color: "bf-dim", note: "Bathroom deflection (+1)   /   Therapy 'I've been busy' (+1)" },
+      { name: "NagataPoints", range: "0 → max 0.5 this chapter", pct: 4, color: "bf-sage", note: "Simple empathy response (+0.5) — small but cumulative" },
+      { name: "FernandoPoints", range: "0 → max 1 this chapter", pct: 7, color: "bf-rose", note: "Pet Fernando (+1)" }
+    ],
+
+    devnote: `Two undeclared variables must be added to variables.rpy before Chapter 02 ships: default rsvp_pizzacoffee = None and default boss_meeting_choice = "none". Without these, loading a save from before Chapter 02 will crash on access. Three instances of 'hide harumi' (approx. lines 810, 831, 851) should be corrected to 'hide ha' to match the character definition. Redundant italic markup on si lines — the si character is already italic by definition; {i} tags inside si produce double-italic rendering. Pending SFX placeholders in the apartment scene (kettle, water boil, pouring) are correctly commented — leave for audio pass. A Clack popup during the afternoon office section (around the therapy reminder beat) would reinforce the work-intrusion mechanic already active later at the bus stop.`,
+
+    edits: [
+      {
+        name: "\"Never Met a Human Being Before\"",
+        location: "label email_workday_02 — morning phone scene",
+        reason: "Saki doesn't observe institutions. She observes specifics. 'Coffee and pizza. After hours.' already carries the deadpan — the cultural commentary about HR is not her register. She'd notice one wrong detail, not issue a verdict about a department.",
+        before: `si "Coffee and pizza. Together. After hours. Because apparently HR has never met a human being before."`,
+        after: `si "Coffee and pizza. After hours."
+si "There's no universe where I'm going to that."`
+      },
+      {
+        name: "\"Why Did I Think Checking Email...\"",
+        location: "label email_workday_02",
+        reason: "Saki knows exactly why she checked email — she always does. This question implies self-awareness about the habit, which she doesn't have. Replace with a physical action that carries the same resignation.",
+        before: `si "Why did I think checking email first thing in the morning was a good idea?"`,
+        after: `si "I set the phone face-down on the mattress."`
+      },
+      {
+        name: "\"Emotional Labor As Usual\"",
+        location: "label workday_02 — bathroom / Aya texts",
+        reason: "'Emotional labor' is cultural vocabulary Saki doesn't use. She notices patterns; she doesn't name them with clinical shorthand. The sister's name alone, spoken flat, carries more weight than any framing.",
+        before: `s h neutral "Aya. Doing the emotional labor as usual."`,
+        after: `s h neutral "Aya."`
+      },
+      {
+        name: "Verdict on Aya / Self-Diagnosis",
+        location: "label workday_02 — after Aya texts",
+        reason: "'She's always been better at this' is a verdict about Aya's character. 'I'm just not built like that' is self-diagnosis. Saki deflects from both. One line showing the contrast in behavior replaces both.",
+        before: `n "She's always been better at this. Talking, caring, showing up..."
+si "I'm just not built like that. Especially not at 7 a.m."`,
+        after: `n "She picks up the phone. I set it face-down."`
+      },
+      {
+        name: "\"Simple. Predictable. Mine.\"",
+        location: "label workday_02 — breakfast",
+        reason: "Saki is labeling the emotional meaning of her breakfast routine for the player. She wouldn't do this consciously. The line before it already does the work.",
+        before: `n "On my way out, I grab my usual breakfast: canned coconut coffee and a convenience-store bun."
+n "Simple. Predictable. Mine."`,
+        after: `n "On my way out, I grab my usual breakfast: canned coconut coffee and a convenience-store bun."`
+      },
+      {
+        name: "\"For Someone Who Inherited This Office\"",
+        location: "label workday_02_bosstalk01 — boss's office",
+        reason: "Saki doesn't track organizational backstory. She observes behavior in front of her. The first clause is social analysis; the second is the actual observation.",
+        before: `n "For someone who inherited this office, he looks one email away from imploding."`,
+        after: `n "He looks one email away from imploding."`
+      },
+      {
+        name: "\"Employees of the Month\"",
+        location: "label workday_02_bosstalk01 — boss meeting",
+        reason: "The chapter's most quotable line and the most un-Saki line in the script. Shaped, delivered, aware of its own wit. She'd have a flat thought, not a dark joke.",
+        before: `si "{i}If we die in here, we die as Employees of the Month.{/i}"`,
+        after: `si "Noted."`
+      },
+      {
+        name: "\"Caring Is Kind of Your Thing\"",
+        location: "label workday_02_bosstalk01 — nervous branch post-meeting",
+        reason: "Nagata is telling Saki who she is. He deflects with the situation, not with character portraits. Same warmth, less prescription.",
+        before: `na "For what it's worth? Being nervous just means you care."
+na "And caring is kind of your thing, even if you pretend it's not."`,
+        after: `na "For what it's worth? Being nervous just means you care."
+na "They picked the right two people for this."`
+      },
+      {
+        name: "\"I Don't Have a Cynical Comeback\"",
+        location: "label workday_02_harumi02 — Harumi says Saki has patience",
+        reason: "Saki narrating her own failure to be witty is meta-commentary on her composure. She'd observe Harumi, not herself. Shift the focus outward.",
+        before: `n "I don't have a cynical comeback for that."`,
+        after: `n "I don't answer right away."`
+      },
+      {
+        name: "\"Usually I Have to Translate Myself\"",
+        location: "label workday_02_harumi02",
+        reason: "Self-analytical observation about her own social difficulty. Saki doesn't have this vocabulary for herself. She'd notice something Harumi does, not something she usually has to do.",
+        before: `n "Usually, I have to translate myself."`,
+        after: `n "She waits without filling the quiet."`
+      },
+      {
+        name: "\"Standing Next to Her Feels Easier\"",
+        location: "label ch02_stress_slowingdown — grounding scene",
+        reason: "This names the emotional experience directly. Saki registers physical things, not emotional comparisons. The new line holds the same meaning without Saki forming the thought consciously.",
+        before: `n "Standing next to her feels…{w=0.35} easier than standing alone."`,
+        after: `n "I don't feel the need to fill it."`
+      },
+      {
+        name: "Post-Harumi Internal Spiral",
+        location: "label workday_02_harumi02 — after Harumi's bus leaves",
+        reason: "Saki actively managing her own feelings requires her to have already recognized them. That's more self-awareness than she'd have here. The deflection should happen through behavior, not internal debate.",
+        before: `si "Ugh. 'Get home safe'?"
+si "Why did I say it like that?"
+n "Usually, I have to translate myself."
+n "I look at the empty space where she was standing. The quiet she left behind feels heavy."
+n "I shake my head, physically shaking the thought away."
+si "Stop it."
+si "It was just a conversation about the weather. Don't make it into something."
+si "She's just nice. And I'm just sleep-deprived."
+si "That's all it is."`,
+        after: `si "'Get home safe.'"
+si "…Who says that."
+n "I pull my phone out."
+n "The screen is full of emails."`
+      },
+      {
+        name: "\"But It Makes Sense\" / \"Small Comfort\"",
+        location: "label workday_02_harumi02 — end of bus stop, before bodega jump",
+        reason: "Saki arriving at a comforting thought about Harumi is the internal work of a person who has processed something. She hasn't. Cut and jump directly to the bodega.",
+        before: `n "…But it makes sense."
+show black
+with dissolve
+pause 1.5
+n "And for some reason, that brings me a small comfort."
+pause 2.0
+jump bodega_day2`,
+        after: `pause 1.5
+jump bodega_day2`
+      },
+      {
+        name: "hide harumi → hide ha (Technical x3)",
+        location: "Approx. lines 810, 831, 851 — grounding scene and bus departure",
+        reason: "The character is defined as 'ha' in 02_Characters.rpy. 'hide harumi' references an undefined image tag and will produce a Ren'Py warning or silent failure. Three instances require correction.",
+        before: `hide harumi
+with dissolve
+n "I listen."`,
+        after: `hide ha
+with dissolve
+n "I listen."`
+      },
+      {
+        name: "Missing Variable Declarations (Technical)",
+        location: "variables.rpy — must be added before Chapter 02 ships",
+        reason: "rsvp_pizzacoffee and boss_meeting_choice are assigned inside menus but never declared with default. Loading a save from before Chapter 02 will crash on access to either variable.",
+        before: `# (absent from variables.rpy)`,
+        after: `# Chapter 02 Flags
+default rsvp_pizzacoffee = None
+default boss_meeting_choice = "none"`
+      }
+    ]
+  },
+
+// ── NEXT CHAPTER GOES HERE ────────────────────────────────────────────────────
+  3: {
+    title: "Chapter Three",
+    sub: "Someone New, Standing Still",
+    status: "Audit Complete",
+
+    summary: `Chapter Three earns its ending through accumulation. A full workday — three possible openings depending on the RSVP choice, a morning of deliberate bus-stop reasoning, a user journey map that doubles as Saki's own diagram, a vending machine that will not cooperate, Nagata's daughter standing in a lobby, and a puddle — leads to a pig-shaped cookie pressed into Saki's hand at a bus stop in the rain. The pig charm callback (Harumi noticed it in Chapter One; now she brings a pig cookie because Saki always looks too serious) is the chapter's structural peak and is handled with the restraint it deserves. The user journey map — Notice, Interest, Habit, Attachment, Fear of Loss — is the best piece of writing in the project so far. The chapter's recurring problem is Saki explaining her own avoidance: several moments that should land through behavior are partially named. The edits trim those without touching anything structural.`,
+
+    vibe: ["Notice. Interest. Habit. Attachment.", "Fear of Loss."],
+    vibeAttr: "Nagata / the slide — label ch03_user_journey_map / the chapter's structural center",
+
+    tally: { cut: 11, rewrite: 8, added: 0 },
+
+    structural: `Sound. No label changes or branch logic changes required. One dead-code branch in the harumi_apology_count conditional simplified. Clack placeholder text (x's) at bus stop flagged for asset pass — not a structural issue.`,
+
+    textures: [
+      {
+        num: "01",
+        name: "The Vending Machine",
+        pull: "I deliver a flat-palmed slap fueled by quiet spite. / The drink slides a millimeter. / So it's personal...",
+        body: "Four menus stacked. Escalating physical commitment to a drink that may not be worth it. No punchline — just Saki and an object in a disagreement neither of them will win cleanly. The gag earns itself because it never comments on itself. Protect every beat."
+      },
+      {
+        num: "02",
+        name: "The Doorknob",
+        pull: "My hand tightens on the knob like I'm trying to make that true.",
+        body: "Saki tells herself she takes this bus route because it's the easiest way home. Her hand tightens on the doorknob as she thinks it. The physical detail contradicts the internal rationalization without naming the contradiction. One line carrying everything."
+      },
+      {
+        num: "03",
+        name: "The Pig Cookie in the Bag",
+        pull: "I tuck the cookie carefully into my bag, like it might break if I move too fast.",
+        body: "She's been carrying a small pig charm on her bag since before she met Harumi. Now she carries a pig cookie home like it's something fragile. No comment. No awareness. This is the chapter's emotional close, and it arrives through a single physical action. Do not touch it."
+      }
+    ],
+
+    milestoneIntro: `Chapter Three is the point economy's most complex chapter so far. Multiple NagataPoints opportunities accumulate toward his Ch11 letter threshold. The user journey map awards both WorkPoints and SakiGrowthPoints simultaneously depending on framing — the only chapter where those two tracks are earned in the same scene. HarumiPoints cap is modest this chapter; the pig cookie and puddle scenes are about texture, not points.`,
+
+    milestones: [
+      { name: "HarumiPoints", range: "0 → max 2 this chapter", pct: 14, color: "bf-rose", note: "Puddle retaliate (+1)   /   'I'm still thinking about it' at bedtime (+1)" },
+      { name: "SakiGrowthPoints", range: "multiple gains", pct: 22, color: "bf-gold", note: "Admit hoping to see Harumi (+1)   /   Kana greeting (+1)   /   Engage emotional framing (+1)   /   Home check-in with Nagata (+0.5)   /   Puddle retaliate (+1)   /   Bedtime reflection (+1)" },
+      { name: "WorkPoints", range: "0 → max 3 this chapter", pct: 20, color: "bf-dim", note: "Pizza party attendance (+1)   /   Engage emotional framing (+1)   /   Treat as deliverables (+1)" },
+      { name: "NagataPoints", range: "0 → max 3 this chapter", pct: 20, color: "bf-sage", note: "Snack thanks (+1)   /   Home check-in question (+1)   /   Engage emotional framing (+1)" },
+      { name: "kana_approval", range: "flag — True / False", pct: 0, color: "bf-sage", note: "Simple polite greeting → True   /   Seeds Ch11 Kana memory callback" }
+    ],
+
+    devnote: `Three expression tag fixes needed before Ch03 ships: 'soft smile' → 'soft_smile' (underscore) at three points in the Kana lobby scene. Duplicate 's' prefix on line 227 ('s s w neutral' → 's h neutral'). Setting fix on line 1242 ('s w tired' → 's h tired') and line 227 (home scene, not work scene). Duplicate 'show h u neutral' at bus stop — remove the second call. Two spelling errors: 'lavendar' → 'lavender' and 'reluctanctly' → 'reluctantly'. Clack placeholder text (x's at the bus stop) needs real content for asset pass. Music at line 900 uses a direct string path rather than a named alias — align with audio_setup.rpy. The apology-count conditional has dead code — the '== 3' branch will never fire after line 1015; simplify to '>= 4'.`,
+
+    edits: [
+      {
+        name: "\"Future Me Made a Choice\"",
+        location: "label ch03_evening_no_email",
+        reason: "Saki wouldn't narrate her own avoidance with wry self-awareness. She acts. The coat being already on says everything — the commentary undercuts it.",
+        before: `n_f "My coat is already on."
+si_f "Future me made a choice, apparently."
+n_f "I slip out before anyone notices."`,
+        after: `n_f "My coat is already on."
+n_f "I slip out before anyone notices."`
+      },
+      {
+        name: "\"Dodged That One\" / \"Made the Right Call\"",
+        location: "label ch03_evening_no_email and ch03_evening_declined",
+        reason: "Post-hoc self-congratulation. Saki doesn't issue verdicts on her own choices. She makes them and moves.",
+        before: `si_f "Dodged that one."`,
+        after: `si_f "Cold out."`
+      },
+      {
+        name: "\"Legally Allowed to Leave\"",
+        location: "label ch03_pizza_party",
+        reason: "The contract framing is Saki — behavioral, self-imposed. The legal escalation is a quip. Cut the second line to keep the first.",
+        before: `si_f "Two slices. That's the contract."
+si_f "Two slices and I'm legally allowed to leave."`,
+        after: `si_f "Two slices. That's the contract."
+si_f "Two slices, and I've fulfilled my end."`
+      },
+      {
+        name: "\"Something That Probably Isn't Funny\"",
+        location: "label ch03_pizza_party",
+        reason: "Saki notices volume, not social quality. She doesn't assess whether the laugh was warranted.",
+        before: `n_f "Someone laughs too loud at something that probably isn't funny."`,
+        after: `n_f "Someone laughs too loud down the far end of the room."`
+      },
+      {
+        name: "Bus Stop Internal Monologue",
+        location: "label ch03_pizza_party — before Morgan interrupts",
+        reason: "The self-interrupt is right in structure but shows too much. 'And even if she is, so what?' and 'It's a bus stop. Not a—' are performed denials, not genuine ones. The interrupt should feel like catching herself mid-thought, not completing the thought before cutting it off.",
+        before: `si_f "If I left now, I could catch the 6:20 bus."
+si_f "Stop."
+si_f "She's probably not even there tonight."
+si_f "And even if she is, so what?"
+si_f "It's a bus stop. Not a—"
+si_f "Just eat your pizza."`,
+        after: `si_f "If I left now, I could catch the 6:20 bus."
+si_f "..."
+si_f "Just eat your pizza."`
+      },
+      {
+        name: "\"Which Is Hilarious, Considering\"",
+        location: "label officearrival_day03 — empathy map slide",
+        reason: "Cultural self-irony. Saki doesn't find things 'hilarious.' She notices the gap between what the slide asks and what she can answer.",
+        before: `n "We're supposed to map how people feel at every step."
+n "Which is hilarious, considering."`,
+        after: `n "We're supposed to map how people feel at every step."
+n "I stare at the slide for a moment."`
+      },
+      {
+        name: "User Journey Map — Explicit Payoff Lines",
+        location: "label ch03_user_journey_map — lines 511 and 559",
+        reason: "Both lines name what the diagram already shows. 'Notice. Interest. Habit. Attachment. Fear of Loss.' does this work without any help. The narrator explaining the metaphor undercuts the beat entirely. Both lines removed.",
+        before: `n "It looks uncomfortably like a diagram of someone falling for something they never planned to."
+window hide
+stop music fadeout 1.5
+pause 1.5
+jump meetingroom_usermap_02`,
+        after: `window hide
+stop music fadeout 1.5
+pause 1.5
+jump meetingroom_usermap_02`
+      },
+      {
+        name: "\"Am I Hoping to See Her?\"",
+        location: "label vending_gag_done — end of day",
+        reason: "Saki asking herself about her feelings is more introspection than she'd allow. She'd catch herself moving faster, not examine the motivation.",
+        before: `si "…I wonder if she'll be at the bus stop."
+pause 1.0
+s w annoyed "..."
+si "Am I hoping to see her?"`,
+        after: `si "…I wonder if she'll be at the bus stop."
+pause 1.0
+s w annoyed "..."`
+      },
+      {
+        name: "\"Deserves Jail Time\"",
+        location: "label splash_scene — bus stop ad panel",
+        reason: "Cultural snark with a verdict. Saki observes specific design failures, not issues sentences.",
+        before: `n "An ad panel glows behind the bench—neon gradient, six different fonts wrestling for attention."
+si "Whoever approved that header deserves jail time."`,
+        after: `n "An ad panel glows behind the bench—neon gradient, six different fonts wrestling for attention."
+si "The kerning alone is a crime."`
+      },
+      {
+        name: "\"I Hear My Own Voice Flatten\"",
+        location: "label splash_scene — 'Long. Loud. Too much.' branch",
+        reason: "Saki monitoring her own vocal delivery in real-time is too self-aware. She'd observe Harumi's response instead.",
+        before: `s u guarded "Long. Loud. Too much."
+n "I hear my own voice flatten as I say it."`,
+        after: `s u guarded "Long. Loud. Too much."
+n "She doesn't push."`
+      },
+      {
+        name: "\"Not Awkward. Just Still.\"",
+        location: "label splash_scene — bridge after puddle laughter",
+        reason: "Saki labeling the emotional quality of a silence. She'd describe what's in it, not categorize it.",
+        before: `n "The laughter fades into something quieter."
+n "Not awkward. Just still."
+n "Rain and bus-engine noise from down the street fill the gap, and neither of us rushes to talk over it."`,
+        after: `n "The laughter fades."
+n "Rain and bus-engine noise from down the street. Neither of us rushes to talk over it."`
+      },
+      {
+        name: "\"Her Standing in a Discount Aisle\"",
+        location: "label splash_scene — pig cookie scene",
+        reason: "Saki constructing a vivid imagined backstory for Harumi's shopping trip is too fond and composed. She'd notice the specific cookie cutter choice without narrating the circumstances behind it.",
+        before: `n "I can see it already: her standing in a discount aisle, pretending it was the least ridiculous choice."`,
+        after: `n "Of all the cookie cutters she could have brought."`
+      },
+      {
+        name: "\"Small Victory\"",
+        location: "label splash_scene — after Harumi presses cookie into Saki's hand",
+        reason: "Saki consciously scoring Harumi's non-apology as a win is too self-aware. She'd notice the absence — not tally it.",
+        before: `si "She's not apologizing for this one."
+si "Small victory."`,
+        after: `si "She's not apologizing for this one."`
+      },
+      {
+        name: "Fish Tank Punchline",
+        location: "label day3_evening_home",
+        reason: "The first line is wistful and character-appropriate. The second undercuts it with a joke. The first beat stands alone.",
+        before: `si "I wonder what it would be like to just float around all day in the same little tank."
+si "…Actually, that's uncomfortably close to having a job."`,
+        after: `si "I wonder what it would be like to just float around all day in the same little tank."`
+      },
+      {
+        name: "Typos (Technical x2)",
+        location: "label ceiling_morning",
+        reason: "Two spelling errors that will render in published game text: 'lavendar' and 'reluctanctly'.",
+        before: `n "The past days have bled together. Work, bus, lavendar umbrella, home."
+n "I crawl out of bed and reluctanctly drag myself to the bathroom."`,
+        after: `n "The past days have bled together. Work, bus, lavender umbrella, home."
+n "I crawl out of bed and reluctantly drag myself to the bathroom."`
+      },
+      {
+        name: "soft smile → soft_smile (Technical x3)",
+        location: "label day3_kana_lobby — lines 851, 867, 883",
+        reason: "Expression tag missing underscore will not resolve to the defined sprite expression. Three instances, all flagged in the script's own comments.",
+        before: `s w soft smile "Hey. Nice to meet you."
+s w soft smile "Thanks, Kana."
+s w soft smile "Yeah. See you."`,
+        after: `s w soft_smile "Hey. Nice to meet you."
+s w soft_smile "Thanks, Kana."
+s w soft_smile "Yeah. See you."`
+      },
+      {
+        name: "Duplicate Sprite Show (Technical)",
+        location: "label splash_scene — Harumi arrives, lines 936 and 941",
+        reason: "'show h u neutral' is called twice in four lines. The second call is redundant and flagged in the script's own comment.",
+        before: `show h u neutral at center
+with dissolve
+h "Saki!"
+
+# DUPLICATE: show h u neutral already inserted above — remove one of these
+show h u neutral
+with dissolve`,
+        after: `show h u neutral at center
+with dissolve
+h "Saki!"`
+      },
+      {
+        name: "Prefix / Setting Fixes (Technical x2)",
+        location: "Line 227 (fish tank) and line 1242 (apartment)",
+        reason: "'s s w neutral' has a duplicate 's' prefix. 's w tired' at the apartment door uses work setting 'w' — should be home setting 'h'. Both flagged in the script's own comments.",
+        before: `s s w neutral "It's too early to feed you. Sorry."
+s w tired "Home."`,
+        after: `s h neutral "It's too early to feed you. Sorry."
+s h tired "Home."`
+      },
+      {
+        name: "Apology Count Dead Code (Technical)",
+        location: "label splash_scene — pig cookie, lines 1129-1132",
+        reason: "After 'That's three' fires at the puddle (line 1015), the count is at 3. The pig cookie apology increments it to 4. The 'if == 3' check will therefore never fire here — it's dead code. Simplify to a single >= 4 branch.",
+        before: `if harumi_apology_count == 3:
+    si "That's three..."
+elif harumi_apology_count >= 4:
+    si "That's four..."`,
+        after: `if harumi_apology_count >= 4:
+    si "That's four..."`
+      }
+    ]
+  }
+};
+
+// ── CHAPTER SWITCHER ──────────────────────────────────────────────────────────
+
+function switchChapter(ch) {
+  const chNum = parseInt(ch);
+  if (CHAPTERS[chNum]) {
+    loadChapter(chNum);
+    switchTab('summary');
+  } else {
+    // Show placeholder
+    document.getElementById('panel-summary').classList.remove('active');
+    document.getElementById('panel-flavor').classList.remove('active');
+    document.getElementById('panel-milestone').classList.remove('active');
+    document.getElementById('panel-edits').classList.remove('active');
+    document.getElementById('panel-placeholder').classList.add('active');
+    document.getElementById('ph-title').textContent = `Chapter ${String(chNum).padStart(2,'0')} — not yet available`;
+    document.getElementById('current-chapter-title').textContent = `Chapter ${chNum < 10 ? '0'+chNum : chNum}`;
+    document.getElementById('current-chapter-sub').textContent = 'Pending audit';
+    document.getElementById('status-badge').textContent = 'Pending';
+    document.querySelectorAll('.tab-btn').forEach(b => b.disabled = true);
+  },
+
+  CHAPTERS[4] = {
+    id: 4,
+    title: "Chapter Four",
+    subtitle: "(TBD — check Ch.03 chapter card)",
+    tagline: "I notice before I think",
+
+    narrativeAssessment: "Chapter 04 is the absence chapter, and it earns that structure. The opening flashback is the right call — warmth given before it's withheld. The bus stop absence sequence is the chapter's best sustained work. The Fernando scene handles its branching cleanly and gives Saki an instinctive act of care the rooftop can turn against her. The ripple-counting callback at the end is the chapter's finest moment — protect it. What drifts: Saki's rooftop voice over-explains in several places; a few lines deliver thesis statements the chapter has already shown. The ceiling crack reference uses plural, diluting the Ch.01 plant. One critical audio gap before the chapter card. Structurally clean, no dead ends.",
+
+    layerStatus: {
+      structure: { status: "pass", note: "No orphaned labels or dead ends. Branch logic is clean. All paths converge at day04_home_night." },
+      variables: { status: "warn", note: "AyaAvoidance handled via aya_text_2_day4 subroutine — confirmed. StrayPoints assigned on freeze path but not consumed in any ending router — flag for K-Bar. Optional secondary AyaAvoidance on rooftop 'Read it later' documented." },
+      routeLogic: { status: "pass", note: "Two clean branches from office evening (Fernando / stay late). Sub-branches within Fernando path both resolve to post_fernando_scene. All point assignments correctly scoped." },
+      dialogueVoice: { status: "flag", note: "Saki editorializes in rooftop section (thesis lines flagged). Morning over-labels emotion. Flashback: one 'rewards me' and one intent-reading line. Nagata voice holds. Raffa voice holds. Fernando beat trimmed." },
+      pacing: { status: "pass", note: "Opening flashback pacing is good. Bus stop absence sequence lands. Fernando scene runs slightly long in aftermath (Raffa + ankle bump) but earns it. Rooftop is appropriately quiet except where over-explained." },
+      visuals: { status: "flag", note: "Seven confirmed sprite tag bugs: double prefixes, wrong setting context (u vs w), wrong expression names. All batched in Edit 17 with before/after." },
+      audio: { status: "critical", note: "bgm_saki_theme started at rooftop (line 941) is NOT stopped before chapter card. Will bleed into Ch.05. Fix: add stop music fadeout 2.0 to ch04_chapter_card. All ambience starts/stops otherwise balanced." },
+      flavor: { status: "pass", note: "Strong flavor inventory: ripple counting, fish greeting menu, undone cuff, tilted elevator 4, Fernando's cardboard throne, ankle nuzzle, coffee ritual. All protected." },
+      planted: { status: "flag", note: "Ch.01 ceiling crack callback present but uses plural ('cracks') — dilutes the plant. Fix to singular (Edit 1). Ripple-counting callback at chapter end is excellent — no changes needed. Purple umbrella as absence marker works well." },
+      technical: { status: "flag", note: "Lobby clack text contains embedded production note — flag for replacement. StrayPoints variable orphaned — verify intent. Optional AyaAvoidance increment on rooftop 'Read it later' documented. UTF-8 pass recommended; smart quotes not confirmed absent." }
+    },
+
+    scenes: [
+      { label: "busstop_pets", title: "Flashback — Bus Stop (Day 3 Evening)" },
+      { label: "day4_start", title: "Morning — Ceiling / Bathroom / Studio" },
+      { label: "morning_day04", title: "Morning Commute" },
+      { label: "busride_morning_day04", title: "Bus Ride — Construction Delay" },
+      { label: "day04_office_evening", title: "Office — EOD Branch" },
+      { label: "day04_busstop", title: "Bus Stop — Harumi Absent" },
+      { label: "saving_fernando", title: "Bodega — Fernando Incident" },
+      { label: "protect_fernando_scene2", title: "Bodega — Post-Intervention" },
+      { label: "post_fernando_scene", title: "Bodega Interior — Aftermath" },
+      { label: "post_saving_fernando", title: "Bodega Counter — Raffa Beat" },
+      { label: "day4_fishtank", title: "Home — Fish Tank" },
+      { label: "day04_bedtime", title: "Bedtime Transition" },
+      { label: "ch4_rooftop_insomnia_adv", title: "Rooftop — Insomnia" },
+      { label: "ch04_chapter_card", title: "Chapter Card → Chapter 5" }
+    ],
+
+    edits: [
+      {
+        id: 1,
+        name: "Ceiling crack — singular restores Ch.01 plant",
+        layer: "planted",
+        location: "day4_start",
+        severity: "moderate",
+        reason: "The Ch.01 planted detail is one specific crack Saki has never reported. Plural makes it generic and loses the plant.",
+        before: `n "Same cracks in the ceiling. Same shadows on the walls."`,
+        after: `n "The crack in the ceiling. Same shadows on the walls."`
+      },
+      {
+        id: 2,
+        name: "Saki's feeling about Harumi — too direct",
+        layer: "dialogueVoice",
+        location: "day4_start",
+        severity: "moderate",
+        reason: "Saki does not arrive at emotional verdicts clearly. She deflects or notices the absence of something, not the presence of a feeling.",
+        before: `n "Not every night. Just enough that it feels wrong when she's not there."`,
+        after: `n "Not every night. Just enough that I notice when it doesn't happen."`
+      },
+      {
+        id: 3,
+        name: "Dread hovering — emotional over-labeling",
+        layer: "dialogueVoice",
+        location: "day4_start / studio morning",
+        severity: "moderate",
+        reason: "Saki does not name her internal states. She registers physical sensation or behavioral resistance.",
+        before: `n "Whatever it is, I can't stop the feeling of dread hovering over me."`,
+        after: `n "Whatever it is, it sits behind everything I do today."`
+      },
+      {
+        id: 4,
+        name: "She says it like — editorializing Harumi's intent",
+        layer: "dialogueVoice",
+        location: "busstop_pets",
+        severity: "minor",
+        reason: "Saki does not interpret what other people mean by the way they say things. Harumi's line already lands without editorial.",
+        before: `n_f "She says it like it's a good thing. Like that's the dream."`,
+        after: `n_f "It sounds like a good thing when she says it."`
+      },
+      {
+        id: 5,
+        name: "Rewards me — transactional reading",
+        layer: "dialogueVoice",
+        location: "busstop_pets",
+        severity: "minor",
+        reason: "'Rewards me' implies Saki is reading Harumi's intent as a transaction. She notices outcomes, not motivations.",
+        before: `n_f "She rewards me with a small laugh, and it makes me want to join her."`,
+        after: `n_f "She laughs, just a small one, and something in me wants to follow it."`
+      },
+      {
+        id: 6,
+        name: "Harden my gaze — theatrical",
+        layer: "dialogueVoice",
+        location: "day04_busstop",
+        severity: "minor",
+        reason: "Saki's physical language is minimal. 'Harden my gaze' is a register above her baseline.",
+        before: `n "I harden my gaze to the street instead."`,
+        after: `n "I look at the street instead."`
+      },
+      {
+        id: 7,
+        name: "Medieval knights — internet-y register",
+        layer: "dialogueVoice",
+        location: "protect_fernando_scene2",
+        severity: "minor",
+        reason: "Saki does not frame her own actions through cultural references. 'Feeling a little ridiculous' alone is more honest and more her.",
+        before: `n "Despite feeling silly-for a split moment, I feel like one of those medieval knights."`,
+        after: `n "I feel a little ridiculous, but my feet don't move."`
+      },
+      {
+        id: 8,
+        name: "Fernando blink — trim colored inner voice",
+        layer: "dialogueVoice",
+        location: "protect_fernando_scene2",
+        severity: "minor",
+        reason: "The slow blink is already doing all the work. The colored paraphrase of Fernando's thoughts is too specific and too long — it closes off the reader's own reading.",
+        before: `n "Fernando blinks once, very slowly, as if to say {color=#DAA520}'of course I would have handled that...but thank you.'{/color}"`,
+        after: `n "Fernando blinks once, very slowly."`
+      },
+      {
+        id: 9,
+        name: "Danger doesn't scare me — too quotable",
+        layer: "dialogueVoice",
+        location: "ch4_rooftop_insomnia_adv",
+        severity: "moderate",
+        reason: "This is the chapter's thesis stated plainly. The chapter has already demonstrated it. Saki at 2am on a roof wouldn't give herself this clean a formulation.",
+        before: `n "My body moved before fear caught up."\nn "Danger doesn't scare me."\nn "This does."`,
+        after: `n "My body moved before I thought about it."\nn "I don't know why that was easier."`
+      },
+      {
+        id: 10,
+        name: "Defenseless animal — editorial verdict",
+        layer: "dialogueVoice",
+        location: "ch4_rooftop_insomnia_adv",
+        severity: "moderate",
+        reason: "'Defenseless animal' is slightly rhetorical and self-pitying — Saki would be flatter and more specific.",
+        before: `n "I couldn't even help a defenseless animal."\nn "And I'm still afraid to text my sister."`,
+        after: `n "I stood there and did nothing while a cat almost got hurt."\nn "I still haven't answered my sister."`
+      },
+      {
+        id: 11,
+        name: "Something plain feeling meaningful — self-aware thesis",
+        layer: "dialogueVoice",
+        location: "ch4_rooftop_insomnia_adv",
+        severity: "moderate",
+        reason: "Saki notices composition. She does not explain what composition means to her. The previous lines already showed it.",
+        before: `n "I like the composition."\nn "How something plain can still feel meaningful."`,
+        after: `n "I like the composition."`
+      },
+      {
+        id: 12,
+        name: "Must be nice — stock register",
+        layer: "dialogueVoice",
+        location: "day4_fishtank",
+        severity: "minor",
+        reason: "Mild internet-register shorthand. Saki wouldn't express envy of fish this casually. Cut it; the fish tank beat doesn't need the editorial.",
+        before: `n "The fish continue drifting. Unbothered by time, weather, or missed bus stops."\nsi "Must be nice."`,
+        after: `n "The fish continue drifting. Unbothered by time, weather, or missed bus stops."`
+      },
+      {
+        id: 13,
+        name: "Done thinking — too declarative",
+        layer: "dialogueVoice",
+        location: "day04_bedtime",
+        severity: "minor",
+        reason: "Saki does not announce the end of her own processing. The fade-to-black is the punctuation.",
+        before: `si "That's it. I'm done thinking for today."\nshow bgblack\nwith dissolve`,
+        after: `show bgblack\nwith dissolve`
+      },
+      {
+        id: 14,
+        name: "As it spiraled — tense inconsistency",
+        layer: "technical",
+        location: "day4_start / bathroom",
+        severity: "minor",
+        reason: "Narration is present-tense throughout. 'Spiraled' drops into simple past unexpectedly.",
+        before: `n "I don't move to turn it off until I realize I've been standing there just staring at it as it spiraled."`,
+        after: `n "I don't move to turn it off until I realize I've been standing there watching the water spin."`
+      },
+      {
+        id: 15,
+        name: "Non-laugh that almost counts — self-grading",
+        layer: "dialogueVoice",
+        location: "deskday",
+        severity: "minor",
+        reason: "Saki does not grade her own reactions. Physicalize instead.",
+        before: `n "I huff out a non-laugh that almost counts."`,
+        after: `n "I exhale through my nose. Close enough."`
+      },
+      {
+        id: 16,
+        name: "CRITICAL: bgm_saki_theme not stopped before chapter card",
+        layer: "audio",
+        location: "ch04_chapter_card",
+        severity: "critical",
+        reason: "bgm_saki_theme is started at line 941 in the rooftop section and never stopped. The chapter card only stops ambience. Music will bleed into Ch.05.",
+        before: `label ch04_chapter_card:\n    window hide\n    scene bgblack\n    with slow_dissolve\n\n    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`,
+        after: `label ch04_chapter_card:\n    window hide\n    scene bgblack\n    with slow_dissolve\n\n    stop music fadeout 2.0\n    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`
+      },
+      {
+        id: 17,
+        name: "Batched sprite tag bugs — double prefixes and wrong setting context",
+        layer: "visuals",
+        location: "multiple",
+        severity: "critical",
+        reason: "Seven confirmed tag bugs: double 's' prefixes on s_f and s characters, 'w' (indoor) tag used in outdoor scenes, wrong expression names ('smile' vs 'soft_smile', 'worried' vs 'softened').",
+        before: `# Line 49:\ns_f s u curious "What about you? Ever had a pet?"\n# Line 270:\ns s w tired "Yeah. Yeah, I'm fine. Just… tired."\n# Line 471:\ns s w worried "Hey. C'mon now. Leave Fernando alone."\n# Line 519:\ns s w worried "Yeah. I'm...sorry. I just… froze."\n# Line 602:\ns w awkward "I just… didn't want him to get bitten. Or worse."\n# Line 624:\ns w flustered "That's…not necessary."\n# Line 740:\ns s w smile "You're welcome. Again."`,
+        after: `# Line 49:\ns_f u neutral "What about you? Ever had a pet?"\n# Line 270:\ns w tired "Yeah. Yeah, I'm fine. Just… tired."\n# Line 471:\ns u softened "Hey. C'mon now. Leave Fernando alone."\n# Line 519:\ns u softened "Yeah. I'm...sorry. I just… froze."\n# Line 602:\ns u awkward "I just… didn't want him to get bitten. Or worse."\n# Line 624:\ns w neutral "That's…not necessary."\n# Line 740:\ns w soft_smile "You're welcome. Again."`
+      }
+    ],
+
+    flags: [
+      {
+        id: "F1",
+        type: "variable-orphan",
+        severity: "moderate",
+        note: "StrayPoints is assigned (+1) on the freeze path at line 503 but does not appear in any ending router or conditional. Either this feeds a future callback (stray dog reappears in Ch.09 or Ch.13) or it is orphaned. Confirm intent with K-Bar before final build."
+      },
+      {
+        id: "F2",
+        type: "production-note-in-live-text",
+        severity: "moderate",
+        note: "Lobby Clack at line 237 reads: 'Saki, let me know if this feels too safe.' — this is an embedded production note, not a real message. Replace with a properly redacted Clack placeholder before final build."
+      },
+      {
+        id: "F3",
+        type: "variable-optional",
+        severity: "low",
+        note: "Rooftop 'Read it later' branch does not increment AyaAvoidance. The aya_text_2_day4 subroutine handles the primary assignment for this day. If K-Bar wants to weight the rooftop refusal separately, add $ AyaAvoidance += 1 to that branch. Currently optional."
+      },
+      {
+        id: "F4",
+        type: "utf8-pass-needed",
+        severity: "low",
+        note: "UTF-8 pass recommended for full chapter. Smart quotes and any remaining em-dashes not confirmed absent. Run encoding check before final build."
+      }
+    ],
+
+    flavorMoments: [
+      "Ripple-counting exchange — opening flashback. Protect.",
+      "Fish greeting menu ('Morning.' vs silence) — excellent player texture.",
+      "Left cuff undone — Saki does not fix it.",
+      "Tilted elevator number 4 — small tactile detail, earns the 'si Of course it is.'",
+      "Fernando's cardboard throne.",
+      "Fernando ankle nuzzle followed by immediate turn-away.",
+      "Coffee ritual: 'Still too sweet.' / drinks it anyway."
+    ],
+
+    plantedDetails: [
+      {
+        detail: "Ceiling crack (Ch.01 callback)",
+        status: "present but diluted",
+        note: "Line 99 uses plural 'cracks' — Edit 1 corrects to singular. Handle with restraint; no elaboration."
+      },
+      {
+        detail: "Ripple callback",
+        status: "strong",
+        note: "Lines 83–88 pay off the opening flashback cleanly. One of the chapter's best moments. No changes."
+      },
+      {
+        detail: "Purple umbrella as absence marker",
+        status: "working",
+        note: "The bus stop absence sequence uses the umbrella's absence as the emotional anchor. Effective."
+      }
+    ],
+
+    clackInsertions: [
+      { line: 118, location: "bathroom morning", text: "UX Prod. Meeting Moved." },
+      { line: 141, location: "studio morning", text: "Updated xxXxx foXx Xxxxx" },
+      { line: 222, location: "bus — jackhammer delay", text: "Needed asXXxx for xxXxx" },
+      { line: 237, location: "lobby", text: "FLAG: contains production note — replace" }
+    ],
+
+    variablesTouched: [
+      { name: "WorkPoints", change: "+1", condition: "stay late branch" },
+      { name: "SakiGrowthPoints", change: "+1", condition: "step in to protect Fernando" },
+      { name: "SakiGrowthPoints", change: "+0.5", condition: "shoo gently sub-choice" },
+      { name: "SakiGrowthPoints", change: "+0.5", condition: "open Aya message on rooftop" },
+      { name: "SakiGrowthPoints", change: "+0.5", condition: "acknowledge fear on rooftop" },
+      { name: "FernandoPoints", change: "+1", condition: "step in to protect Fernando" },
+      { name: "FernandoPoints", change: "+1", condition: "check in on Fernando at bodega corner (if FernandoPoints >= 1)" },
+      { name: "StrayPoints", change: "+1", condition: "freeze path — ORPHANED, verify intent" },
+      { name: "fernando_encountered", change: "True", condition: "set at day04_busstop entry" },
+      { name: "fernando_saved", change: "True/False", condition: "set by menu choice" },
+      { name: "saki_dinner", change: "curry/sandwich/noodles", condition: "bodega drinks menu" },
+      { name: "AyaAvoidance", change: "via aya_text_2_day4 subroutine", condition: "confirmed — see aya_thread.rpy" }
+    ]
+  };
+}
+
+function loadChapter(chNum) {
+  const ch = CHAPTERS[chNum];
+  document.querySelectorAll('.tab-btn').forEach(b => b.disabled = false);
+  document.getElementById('panel-placeholder').classList.remove('active');
+  document.getElementById('current-chapter-title').textContent = ch.title;
+  document.getElementById('current-chapter-sub').textContent = ch.sub;
+  document.getElementById('status-badge').textContent = ch.status;
+  document.getElementById('summary-body').textContent = ch.summary;
+  document.getElementById('vibe-line-1').textContent = ch.vibe[0];
+  document.getElementById('vibe-line-2').textContent = ch.vibe[1] || '';
+  document.getElementById('vibe-attr').textContent = ch.vibeAttr;
+  document.getElementById('tally-cut').textContent = ch.tally.cut;
+  document.getElementById('tally-rewrite').textContent = ch.tally.rewrite;
+  document.getElementById('tally-added').textContent = ch.tally.added;
+  document.getElementById('structural-note').textContent = ch.structural;
+  buildTextures(ch.textures);
+  buildMilestones(ch.milestones, ch.milestoneIntro, ch.devnote);
+  buildEditSidebar(ch.edits);
+  // Progress pill is updated inside buildEditSidebar
+  renderMoodTags();
+}
+
+// ── TAB SWITCHER ─────────────────────────────────────────────────────────────
+
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.tab-btn');
+  const map = { summary: 0, flavor: 1, milestone: 2, edits: 3 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('active');
+}
+
+// ── BUILD TEXTURES ────────────────────────────────────────────────────────────
+
+function buildTextures(textures) {
+  const list = document.getElementById('texture-list');
+  list.innerHTML = textures.map(t => `
+    <div class="texture-item">
+      <div class="texture-num">${t.num}</div>
+      <div class="texture-name">${t.name}</div>
+      <div class="texture-pull">${t.pull}</div>
+      <p class="prose-dim">${t.body}</p>
+    </div>
+  `).join('');
+}
+
+// ── BUILD MILESTONES ──────────────────────────────────────────────────────────
+
+function buildMilestones(milestones, intro, devnote) {
+  document.getElementById('milestone-intro').textContent = intro;
+  const list = document.getElementById('milestone-list');
+  list.innerHTML = milestones.map(m => `
+    <div class="milestone-row">
+      <div class="milestone-header">
+        <span class="milestone-varname">${m.name}</span>
+        <span class="milestone-range">${m.range}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill ${m.color}" style="width:${m.pct}%"></div></div>
+      <span class="milestone-note">${m.note}</span>
+    </div>
+  `).join('');
+  document.getElementById('devnote').innerHTML = `<span class="devnote-lbl">Developer Note</span>${devnote}`;
+}
+
+// ── BUILD EDIT SIDEBAR ────────────────────────────────────────────────────────
+
+// ── COMPLETION STORAGE ────────────────────────────────────────────────────────
+// Keys are namespaced per chapter + edit index so state never collides across chapters.
+// Format: ut_edit_ch{N}_{idx}  — stored in localStorage as "done" or "open".
+// Adding new chapters requires no changes here; keys are generated dynamically.
+//
+// STATE BAKING: When the file is saved via "Save to file", all current localStorage
+// completion keys are serialized into BAKED_STATE below. On page load, if a key
+// is not yet in localStorage, the baked value is used as the default. This means
+// pushing the saved file to GitHub propagates your progress to all devices.
+
+// ════════════════════════════════════════════════════════════════════════════
+// BAKED STATE — do not edit manually. Updated by "Save to file" button.
+// ════════════════════════════════════════════════════════════════════════════
+const BAKED_STATE = {};
+
+function initState() {
+  // On load: seed localStorage from baked state for any keys not yet set
+  Object.entries(BAKED_STATE).forEach(([k, v]) => {
+    if (!localStorage.getItem(k)) localStorage.setItem(k, v);
+  });
+}
+
+function editKey(chNum, idx) {
+  return 'ut_edit_ch' + chNum + '_' + idx;
+}
+
+function isDone(chNum, idx) {
+  return localStorage.getItem(editKey(chNum, idx)) === 'done';
+}
+
+function setDone(chNum, idx, val) {
+  localStorage.setItem(editKey(chNum, idx), val ? 'done' : 'open');
+}
+
+function getProgress(chNum) {
+  const edits = CHAPTERS[chNum] ? CHAPTERS[chNum].edits : [];
+  const done = edits.filter((_, i) => isDone(chNum, i)).length;
+  return { done, total: edits.length };
+}
+
+function updateProgressPill(chNum) {
+  const { done, total } = getProgress(chNum);
+  const pill = document.getElementById('edit-progress-pill');
+  if (!pill) return;
+  pill.textContent = done + ' / ' + total;
+  pill.classList.toggle('complete', done === total && total > 0);
+}
+
+// ── STATE SYNC FUNCTIONS ──────────────────────────────────────────────────────
+
+function getAllStateKeys() {
+  const keys = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    // Capture all UT keys: completion, notes, and mood tags
+    if (k && k.startsWith('ut_')) keys[k] = localStorage.getItem(k);
+  }
+  return keys;
+}
+
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('sync-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function exportState() {
+  const state = getAllStateKeys();
+  if (!Object.keys(state).length) { showToast('Nothing marked yet.'); return; }
+  const str = btoa(JSON.stringify(state));
+  navigator.clipboard.writeText(str).then(() => showToast('Copied. Paste on another device.'));
+}
+
+function toggleImport() {
+  const wrap = document.getElementById('sync-import-wrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) document.getElementById('sync-input').focus();
+}
+
+function importState() {
+  const raw = document.getElementById('sync-input').value.trim();
+  if (!raw) { showToast('Nothing to import.'); return; }
+  try {
+    const state = JSON.parse(atob(raw));
+    Object.entries(state).forEach(([k, v]) => localStorage.setItem(k, v));
+    document.getElementById('sync-input').value = '';
+    toggleImport();
+    const chNum = parseInt(document.getElementById('chapterNav').value);
+    buildEditSidebar(CHAPTERS[chNum].edits);
+    showToast('Progress imported.');
+  } catch(e) {
+    showToast('Invalid state string.');
+  }
+}
+
+function saveToFile() {
+  // Bake current localStorage state into BAKED_STATE in the HTML, then download
+  const state = getAllStateKeys();
+  const stateJson = JSON.stringify(state, null, 0);
+
+  // Get the current page HTML and replace the BAKED_STATE line
+  let html = document.documentElement.outerHTML;
+
+  // Replace the BAKED_STATE object with current state
+  html = html.replace(
+    /const BAKED_STATE = \{[^}]*\};/,
+    'const BAKED_STATE = ' + stateJson + ';'
+  );
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Saved. Push index.html to GitHub.');
+}
+
+// ── BUILD EDIT SIDEBAR ────────────────────────────────────────────────────────
+
+function buildEditSidebar(edits) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+
+  // Desktop sidebar
+  const list = document.getElementById('edit-sidebar-list');
+  list.innerHTML = edits.map((e, i) => {
+    const done = isDone(chNum, i);
+    return `
+    <button class="edit-sidebar-btn" id="esb-${i}" onclick="loadEdit(${i})">
+      <span class="esb-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="esb-name">${e.name}</span>
+      <span class="esb-status ${done ? 'done' : 'open'}">${done ? 'Done' : 'Open'}</span>
+    </button>`;
+  }).join('');
+
+  // Mobile dropdown
+  const msel = document.getElementById('mobile-edit-select');
+  if (msel) {
+    msel.innerHTML = '<option value="">— Select an edit —</option>' +
+      edits.map((e, i) => {
+        const done = isDone(chNum, i);
+        return `<option value="${i}">${String(i+1).padStart(2,'0')}  ${done ? '✓' : '○'}  ${e.name}</option>`;
+      }).join('');
+  }
+
+  document.getElementById('edit-detail').innerHTML = `
+    <div class="edit-detail-empty">
+      <span class="placeholder-title">Select an edit</span>
+      <span class="placeholder-sub">${window.innerWidth <= 768 ? 'Use the dropdown above' : 'Choose from the list on the left'}</span>
+    </div>`;
+
+  updateMobileStatus(chNum);
+  updateProgressPill(chNum);
+}
+
+function updateMobileStatus(chNum) {
+  const { done, total } = getProgress(chNum);
+  const el = document.getElementById('mobile-edit-status');
+  if (el) el.textContent = done + ' / ' + total + ' done';
+}
+
+// ── TOGGLE EDIT COMPLETION ────────────────────────────────────────────────────
+
+function toggleEdit(idx) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const nowDone = !isDone(chNum, idx);
+  setDone(chNum, idx, nowDone);
+
+  // Update desktop sidebar chip
+  const chip = document.querySelector(`#esb-${idx} .esb-status`);
+  if (chip) {
+    chip.textContent = nowDone ? 'Done' : 'Open';
+    chip.className = 'esb-status ' + (nowDone ? 'done' : 'open');
+  }
+
+  // Update mobile dropdown option
+  const msel = document.getElementById('mobile-edit-select');
+  if (msel) {
+    const opt = msel.options[idx + 1]; // +1 for placeholder
+    if (opt) {
+      const e = CHAPTERS[chNum].edits[idx];
+      opt.textContent = `${String(idx+1).padStart(2,'0')}  ${nowDone ? '✓' : '○'}  ${e.name}`;
+    }
+  }
+
+  // Update detail panel status row
+  const pill = document.getElementById('detail-status-pill');
+  const box  = document.getElementById('detail-toggle-box');
+  const lbl  = document.getElementById('detail-toggle-label');
+  if (pill) {
+    pill.textContent = nowDone ? 'Done' : 'Not Completed';
+    pill.className   = 'status-pill ' + (nowDone ? 'done' : 'open');
+  }
+  if (box) box.className = 'status-toggle-box' + (nowDone ? ' checked' : '');
+  if (lbl) lbl.textContent = nowDone ? 'Mark open' : 'Mark done';
+
+  updateProgressPill(chNum);
+  updateMobileStatus(chNum);
+}
+
+// ── LOAD EDIT DETAIL ──────────────────────────────────────────────────────────
+
+function loadEdit(idx) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const edits = CHAPTERS[chNum].edits;
+  const e = edits[idx];
+  const done = isDone(chNum, idx);
+
+  document.querySelectorAll('.edit-sidebar-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('esb-' + idx).classList.add('active');
+
+  const total = edits.length;
+  const editorId = `editor-${idx}`;
+  const previewId = `preview-${idx}`;
+
+  document.getElementById('edit-detail').innerHTML = `
+    <div class="edit-header">
+      <span class="edit-id">Edit ${String(idx+1).padStart(2,'0')} / ${total}</span>
+      <span class="edit-title">${e.name}</span>
+      <span class="edit-location">${e.location}</span>
+    </div>
+
+    <div class="status-row">
+      <span class="status-pill ${done ? 'done' : 'open'}" id="detail-status-pill">
+        ${done ? 'Done' : 'Not Completed'}
+      </span>
+      <button class="status-toggle" onclick="toggleEdit(${idx})">
+        <div class="status-toggle-box${done ? ' checked' : ''}" id="detail-toggle-box">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.8 7L9 1" stroke="#131313" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="status-toggle-label" id="detail-toggle-label">${done ? 'Mark open' : 'Mark done'}</span>
+      </button>
+    </div>
+
+    <div class="reason-box">
+      <span class="reason-box-lbl">Why this edit</span>
+      <p class="reason-text">${e.reason}</p>
+    </div>
+
+    <div class="code-section">
+      <div class="code-section-header">
+        <span class="code-badge badge-before">Before</span>
+        <button class="copy-btn" id="copy-before-${idx}" onclick="copyCode('before',${idx})">Copy</button>
+      </div>
+      <pre class="code-block before-block">${escHtml(e.before)}</pre>
+    </div>
+
+    <div class="code-section">
+      <div class="code-section-header">
+        <span class="code-badge badge-after">After (suggested)</span>
+        <button class="copy-btn" id="copy-after-${idx}" onclick="copyCode('after',${idx})">Copy</button>
+      </div>
+      <pre class="code-block after-block">${escHtml(e.after)}</pre>
+    </div>
+
+    <div class="code-section">
+      <div class="code-section-header">
+        <span class="code-badge badge-custom">Your Version</span>
+        <div class="editor-controls">
+          <button class="load-after-btn" onclick="loadAfterInEditor(${idx})">Load suggested</button>
+          <button class="copy-btn" id="copy-custom-${idx}" onclick="copyCustom(${idx})">Copy</button>
+        </div>
+      </div>
+      <textarea class="custom-editor" id="${editorId}" placeholder="Write your version here, or load the suggested rewrite above..."></textarea>
+      <div class="editor-controls" style="margin-top:8px">
+        <button class="preview-btn" onclick="runPreview(${idx})">Preview as dialogue</button>
+        <span class="editor-hint">Supports: n / si / s / na / h / bo / menu</span>
+      </div>
+    </div>
+
+    <div class="code-section" id="preview-section-${idx}" style="display:none">
+      <div class="code-section-header">
+        <span class="code-badge badge-preview">Visual Preview</span>
+        <button class="copy-btn" onclick="document.getElementById('preview-section-${idx}').style.display='none'">Close</button>
+      </div>
+      <div class="vn-preview" id="${previewId}">
+        <div class="vn-empty">Preview will appear here</div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <div class="notes-header">
+        <span class="notes-lbl">Notes</span>
+        <span class="notes-saved" id="notes-saved-${idx}">Saved</span>
+      </div>
+      <textarea class="notes-editor" id="notes-${idx}" placeholder="e.g. Boss should refer to Saki by last name — Tanaka." oninput="saveNote(${idx})">${loadNote(chNum, idx)}</textarea>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:4px">
+      ${idx > 0 ? `<button class="load-after-btn" onclick="loadEdit(${idx-1})">&larr; Previous</button>` : '<span></span>'}
+      ${idx < total-1 ? `<button class="preview-btn" onclick="loadEdit(${idx+1})">Next &rarr;</button>` : '<span></span>'}
+    </div>
+  `;
+}
+
+// ── COPY HELPERS ─────────────────────────────────────────────────────────────
+
+function copyCode(type, idx) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const e = CHAPTERS[chNum].edits[idx];
+  const text = type === 'before' ? e.before : e.after;
+  const btnId = type === 'before' ? `copy-before-${idx}` : `copy-after-${idx}`;
+  navigator.clipboard.writeText(text).then(() => flashCopy(btnId));
+}
+
+function copyCustom(idx) {
+  const text = document.getElementById(`editor-${idx}`).value;
+  navigator.clipboard.writeText(text).then(() => flashCopy(`copy-custom-${idx}`));
+}
+
+function flashCopy(btnId) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  const orig = btn.textContent;
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+}
+
+function loadAfterInEditor(idx) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  document.getElementById(`editor-${idx}`).value = CHAPTERS[chNum].edits[idx].after;
+}
+
+// ── NOTES ────────────────────────────────────────────────────────────────────
+
+function noteKey(chNum, idx) { return 'ut_note_ch' + chNum + '_' + idx; }
+
+function loadNote(chNum, idx) {
+  return localStorage.getItem(noteKey(chNum, idx)) || '';
+}
+
+function saveNote(idx) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const val = document.getElementById('notes-' + idx).value;
+  localStorage.setItem(noteKey(chNum, idx), val);
+  const saved = document.getElementById('notes-saved-' + idx);
+  if (saved) {
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 1400);
+  }
+}
+
+// ── MOOD TAGS ─────────────────────────────────────────────────────────────────
+
+function moodKey(chNum) { return 'ut_mood_ch' + chNum; }
+
+function getMoods(chNum) {
+  try { return JSON.parse(localStorage.getItem(moodKey(chNum))) || []; }
+  catch { return []; }
+}
+
+function saveMoods(chNum, moods) {
+  localStorage.setItem(moodKey(chNum), JSON.stringify(moods));
+}
+
+function renderMoodTags() {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const moods = getMoods(chNum);
+  const container = document.getElementById('mood-tags');
+  const addBtn = document.getElementById('mood-add-btn');
+  if (!container) return;
+  container.innerHTML = moods.map((m, i) =>
+    `<span class="mood-tag">${escHtml(m)}<button class="mood-tag-remove" onclick="removeMoodTag(${i})" title="Remove">&times;</button></span>`
+  ).join('');
+  // Hide add button if at max
+  if (addBtn) addBtn.style.display = moods.length >= 2 ? 'none' : 'flex';
+}
+
+function openMoodInput() {
+  document.getElementById('mood-input-wrap').classList.add('open');
+  document.getElementById('mood-input').focus();
+}
+
+function closeMoodInput() {
+  document.getElementById('mood-input-wrap').classList.remove('open');
+  document.getElementById('mood-input').value = '';
+}
+
+function addMoodTag() {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const val = document.getElementById('mood-input').value.trim().slice(0, 10);
+  if (!val) return;
+  const moods = getMoods(chNum);
+  if (moods.length >= 2) return;
+  moods.push(val);
+  saveMoods(chNum, moods);
+  closeMoodInput();
+  renderMoodTags();
+}
+
+function removeMoodTag(i) {
+  const chNum = parseInt(document.getElementById('chapterNav').value);
+  const moods = getMoods(chNum);
+  moods.splice(i, 1);
+  saveMoods(chNum, moods);
+  renderMoodTags();
+}
+
+// Enter key submits mood input
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'mood-input') {
+    addMoodTag();
+  }
+});
+
+// ── RENPY PREVIEW PARSER ─────────────────────────────────────────────────────
+
+function runPreview(idx) {
+  const code = document.getElementById(`editor-${idx}`).value.trim();
+  const preview = document.getElementById(`preview-${idx}`);
+  const section = document.getElementById(`preview-section-${idx}`);
+  section.style.display = 'flex';
+  section.style.flexDirection = 'column';
+  section.style.gap = '8px';
+
+  if (!code) {
+    preview.innerHTML = '<div class="vn-empty">Nothing to preview.</div>';
+    return;
+  }
+
+  const lines = code.split('\n');
+
+  // Separate narrator lines from dialogue lines for the two-zone layout
+  let sceneLines = [];   // narrator (n "...")
+  let dialogueBlocks = []; // { type, speaker, text, italic }
+  let choices = [];
+  let inMenu = false;
+
+  function flushMenu() {
+    if (choices.length) {
+      dialogueBlocks.push({ type: 'choice', choices: [...choices] });
+      choices = [];
+    }
+    inMenu = false;
+  }
+
+  lines.forEach(raw => {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) return;
+
+    if (line === 'menu:') { inMenu = true; return; }
+    if (inMenu && line.match(/^"(.+)":$/)) {
+      choices.push(line.match(/^"(.+)":$/)[1]);
+      return;
+    }
+    if (inMenu && !line.match(/^"(.+)":$/) && !line.startsWith('"')) flushMenu();
+
+    let m;
+    // Narrator → scene area
+    m = line.match(/^n\s+"(.+)"$/);
+    if (m) { sceneLines.push(m[1]); return; }
+
+    // si internal
+    m = line.match(/^si\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'internal', speaker:'Saki', text:m[1], italic:true }); return; }
+
+    // s spoken
+    m = line.match(/^s(?:\s+\w+)*\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'saki', speaker:'Saki', text:m[1], italic:false }); return; }
+
+    // na
+    m = line.match(/^na\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'nagata', speaker:'Nagata', text:m[1], italic:false }); return; }
+
+    // h
+    m = line.match(/^h\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'harumi', speaker:'Harumi', text:m[1], italic:false }); return; }
+
+    // bo
+    m = line.match(/^bo\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'boss', speaker:'Boss', text:m[1], italic:false }); return; }
+
+    // em
+    m = line.match(/^em\s+"(.+)"$/s);
+    if (m) { dialogueBlocks.push({ type:'other', speaker:'Email', text:m[1].replace(/\\n/g,'<br>'), italic:true }); return; }
+
+    // generic
+    m = line.match(/^(\w+)\s+"(.+)"$/);
+    if (m) { dialogueBlocks.push({ type:'other', speaker:m[1], text:m[2], italic:false }); return; }
+  });
+
+  if (inMenu) flushMenu();
+
+  if (!sceneLines.length && !dialogueBlocks.length) {
+    preview.innerHTML = '<div class="vn-empty">No recognizable dialogue found.</div>';
+    return;
+  }
+
+  // Build scene area HTML
+  let sceneHtml = sceneLines.map(t =>
+    `<div class="vn-narrator-line">${cleanText(t)}</div>`
+  ).join('');
+
+  // Build dialogue box HTML
+  let boxInner = dialogueBlocks.map(b => {
+    if (b.type === 'choice') {
+      return `<div class="vn-choice">${b.choices.map(c =>
+        `<div class="vn-choice-btn">&rsaquo; ${escHtml(c)}</div>`).join('')}</div>`;
+    }
+    const npClass = { saki:'np-saki', internal:'np-internal', nagata:'np-nagata', harumi:'np-harumi', boss:'np-boss', other:'np-other' }[b.type] || 'np-other';
+    const nameplate = b.speaker ? `<div class="vn-nameplate ${npClass}">${escHtml(b.speaker)}</div>` : '';
+    return `<div class="vn-box" style="margin-bottom:18px">${nameplate}<div class="vn-box-text${b.italic ? ' italic' : ''}">${cleanText(b.text)}</div></div>`;
+  }).join('');
+
+  preview.innerHTML =
+    `<div class="vn-scene-area">${sceneHtml || ''}</div>` +
+    (boxInner ? boxInner : '');
+}
+
+function cleanText(t) {
+  return escHtml(t)
+    .replace(/\{b\}(.*?)\{\/b\}/g, '<strong>$1</strong>')
+    .replace(/\{i\}(.*?)\{\/i\}/g, '<em>$1</em>')
+    .replace(/\{w=[0-9.]+\}/g, '')
+    .replace(/\\n/g, '<br>');
+}
+
+function vnLine() {} // kept for compatibility — runPreview now builds directly
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+initState();
+loadChapter(1);
+</script>
+</body>
+</html>
+
 
 // ── BUILD EDIT SIDEBAR ────────────────────────────────────────────────────────
 
