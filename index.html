@@ -642,6 +642,203 @@ footer {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ── SYNC TOOLBAR ─────────────────────────────── */
+.sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 60px;
+  background: var(--bg-inset);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.sync-bar-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-right: 4px;
+}
+.sync-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border-hi);
+  color: var(--text-dim);
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+.sync-btn:hover { border-color: var(--rose-dim); color: var(--rose); }
+.sync-btn.primary { border-color: var(--sage-dim); color: var(--sage); }
+.sync-btn.primary:hover { border-color: var(--sage); background: var(--sage-bg); }
+.sync-import-wrap {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+.sync-import-wrap.open { display: flex; }
+.sync-input {
+  flex: 1;
+  background: var(--bg-code);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  padding: 6px 10px;
+  border-radius: 2px;
+  outline: none;
+}
+.sync-input:focus { border-color: var(--rose-dim); }
+.sync-toast {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--sage);
+  opacity: 0;
+  transition: opacity 0.3s;
+  letter-spacing: 0.1em;
+}
+.sync-toast.show { opacity: 1; }
+
+/* ── MOBILE EDIT SELECTOR ─────────────────────── */
+.mobile-edit-nav {
+  display: none;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-inset);
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.mobile-edit-select {
+  flex: 1;
+  appearance: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 8px 32px 8px 12px;
+  border-radius: 2px;
+  outline: none;
+}
+.mobile-edit-status {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* ── MOBILE RESPONSIVE ────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Masthead */
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 20px 0;
+    gap: 12px;
+  }
+  .masthead-right {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 14px;
+    width: 100%;
+  }
+  .chapter-title { font-size: 1.7rem; }
+  .chapter-nav-label { display: none; }
+  .masthead-center { display: none !important; }
+
+  /* Sync bar */
+  .sync-bar { padding: 10px 20px; }
+
+  /* Tab bar */
+  .tab-bar {
+    padding: 0 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-size: 0.5rem;
+    padding: 12px 14px 10px;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  /* Panels */
+  .section-wrap { padding: 24px 20px; }
+
+  /* Summary grid — single column */
+  .summary-grid {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+  .sg-cell { padding: 28px 24px; }
+  .vibe-quote { font-size: 1.5rem; }
+  .vibe-secondary { font-size: 1.1rem; }
+  .vibe-cell::before { font-size: 10rem; top: -16px; left: 12px; }
+
+  /* Texture list */
+  .texture-item { padding: 28px 20px; }
+
+  /* Edit suite — sidebar hidden, replaced by mobile dropdown */
+  #panel-edits.active { height: auto; min-height: 0; }
+  .edit-suite-layout {
+    grid-template-columns: 1fr;
+    overflow: visible;
+    height: auto;
+  }
+  .edit-sidebar { display: none; }
+  .edit-detail {
+    padding: 20px;
+    overflow-y: visible;
+    height: auto;
+  }
+  .mobile-edit-nav { display: flex; }
+
+  /* Edit detail content */
+  .edit-header { flex-wrap: wrap; gap: 8px; }
+  .edit-title { font-size: 1.1rem; }
+  .edit-location { font-size: 0.52rem; }
+  .code-block {
+    font-size: 0.6rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: pre;
+  }
+  .custom-editor { font-size: 0.65rem; min-height: 120px; }
+  .editor-controls { flex-wrap: wrap; }
+  .status-row { flex-wrap: wrap; gap: 10px; }
+
+  /* Footer */
+  footer {
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .chapter-title { font-size: 1.4rem; }
+  .tally-cell { padding: 16px 8px; }
+  .tally-num { font-size: 2rem; }
+  .tab-btn { font-size: 0.46rem; padding: 12px 10px 10px; }
+}
 </style>
 </head>
 <body>
@@ -685,6 +882,24 @@ footer {
   <button class="tab-btn" onclick="switchTab('milestone')">Milestone Map</button>
   <button class="tab-btn" onclick="switchTab('edits')">Edit Suite <span class="tab-progress" id="edit-progress-pill"></span></button>
 </nav>
+
+<!-- SYNC TOOLBAR -->
+<!-- This bar lets you export/import completion state across devices.          -->
+<!-- "Export" copies a compact string. "Import" pastes it back.               -->
+<!-- "Save to file" downloads index.html with your progress baked in —        -->
+<!-- push that file to GitHub and both devices will see the same checkboxes.  -->
+<div class="sync-bar">
+  <span class="sync-bar-label">Progress sync</span>
+  <button class="sync-btn primary" onclick="exportState()">Export</button>
+  <button class="sync-btn" onclick="toggleImport()">Import</button>
+  <button class="sync-btn" onclick="saveToFile()">Save to file</button>
+  <span class="sync-toast" id="sync-toast"></span>
+  <div class="sync-import-wrap" id="sync-import-wrap">
+    <input class="sync-input" id="sync-input" placeholder="Paste exported state string here…" />
+    <button class="sync-btn primary" onclick="importState()">Apply</button>
+    <button class="sync-btn" onclick="toggleImport()">Cancel</button>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════ -->
 <!-- PANEL: SUMMARY                       -->
@@ -756,8 +971,15 @@ footer {
 <!-- PANEL: EDIT SUITE                    -->
 <!-- ════════════════════════════════════ -->
 <div class="panel" id="panel-edits">
+  <!-- Mobile only: dropdown replaces sidebar on small screens -->
+  <div class="mobile-edit-nav" id="mobile-edit-nav">
+    <select class="mobile-edit-select" id="mobile-edit-select" onchange="loadEdit(parseInt(this.value))">
+      <option value="">— Select an edit —</option>
+    </select>
+    <span class="mobile-edit-status" id="mobile-edit-status"></span>
+  </div>
   <div class="edit-suite-layout">
-    <!-- Sidebar -->
+    <!-- Sidebar (desktop only) -->
     <aside class="edit-sidebar">
       <div class="edit-sidebar-label">All Edits &mdash; Ch.01</div>
       <div id="edit-sidebar-list"></div>
@@ -1262,6 +1484,23 @@ function buildMilestones(milestones, intro, devnote) {
 // Keys are namespaced per chapter + edit index so state never collides across chapters.
 // Format: ut_edit_ch{N}_{idx}  — stored in localStorage as "done" or "open".
 // Adding new chapters requires no changes here; keys are generated dynamically.
+//
+// STATE BAKING: When the file is saved via "Save to file", all current localStorage
+// completion keys are serialized into BAKED_STATE below. On page load, if a key
+// is not yet in localStorage, the baked value is used as the default. This means
+// pushing the saved file to GitHub propagates your progress to all devices.
+
+// ════════════════════════════════════════════════════════════════════════════
+// BAKED STATE — do not edit manually. Updated by "Save to file" button.
+// ════════════════════════════════════════════════════════════════════════════
+const BAKED_STATE = {};
+
+function initState() {
+  // On load: seed localStorage from baked state for any keys not yet set
+  Object.entries(BAKED_STATE).forEach(([k, v]) => {
+    if (!localStorage.getItem(k)) localStorage.setItem(k, v);
+  });
+}
 
 function editKey(chNum, idx) {
   return 'ut_edit_ch' + chNum + '_' + idx;
@@ -1289,10 +1528,82 @@ function updateProgressPill(chNum) {
   pill.classList.toggle('complete', done === total && total > 0);
 }
 
+// ── STATE SYNC FUNCTIONS ──────────────────────────────────────────────────────
+
+function getAllStateKeys() {
+  const keys = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('ut_edit_ch')) keys[k] = localStorage.getItem(k);
+  }
+  return keys;
+}
+
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('sync-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function exportState() {
+  const state = getAllStateKeys();
+  if (!Object.keys(state).length) { showToast('Nothing marked yet.'); return; }
+  const str = btoa(JSON.stringify(state));
+  navigator.clipboard.writeText(str).then(() => showToast('Copied. Paste on another device.'));
+}
+
+function toggleImport() {
+  const wrap = document.getElementById('sync-import-wrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) document.getElementById('sync-input').focus();
+}
+
+function importState() {
+  const raw = document.getElementById('sync-input').value.trim();
+  if (!raw) { showToast('Nothing to import.'); return; }
+  try {
+    const state = JSON.parse(atob(raw));
+    Object.entries(state).forEach(([k, v]) => localStorage.setItem(k, v));
+    document.getElementById('sync-input').value = '';
+    toggleImport();
+    const chNum = parseInt(document.getElementById('chapterNav').value);
+    buildEditSidebar(CHAPTERS[chNum].edits);
+    showToast('Progress imported.');
+  } catch(e) {
+    showToast('Invalid state string.');
+  }
+}
+
+function saveToFile() {
+  // Bake current localStorage state into BAKED_STATE in the HTML, then download
+  const state = getAllStateKeys();
+  const stateJson = JSON.stringify(state, null, 0);
+
+  // Get the current page HTML and replace the BAKED_STATE line
+  let html = document.documentElement.outerHTML;
+
+  // Replace the BAKED_STATE object with current state
+  html = html.replace(
+    /const BAKED_STATE = \{[^}]*\};/,
+    'const BAKED_STATE = ' + stateJson + ';'
+  );
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Saved. Push index.html to GitHub.');
+}
+
 // ── BUILD EDIT SIDEBAR ────────────────────────────────────────────────────────
 
 function buildEditSidebar(edits) {
   const chNum = parseInt(document.getElementById('chapterNav').value);
+
+  // Desktop sidebar
   const list = document.getElementById('edit-sidebar-list');
   list.innerHTML = edits.map((e, i) => {
     const done = isDone(chNum, i);
@@ -1303,12 +1614,31 @@ function buildEditSidebar(edits) {
       <span class="esb-status ${done ? 'done' : 'open'}">${done ? 'Done' : 'Open'}</span>
     </button>`;
   }).join('');
+
+  // Mobile dropdown
+  const msel = document.getElementById('mobile-edit-select');
+  if (msel) {
+    msel.innerHTML = '<option value="">— Select an edit —</option>' +
+      edits.map((e, i) => {
+        const done = isDone(chNum, i);
+        return `<option value="${i}">${String(i+1).padStart(2,'0')}  ${done ? '✓' : '○'}  ${e.name}</option>`;
+      }).join('');
+  }
+
   document.getElementById('edit-detail').innerHTML = `
     <div class="edit-detail-empty">
       <span class="placeholder-title">Select an edit</span>
-      <span class="placeholder-sub">Choose from the list on the left</span>
+      <span class="placeholder-sub">${window.innerWidth <= 768 ? 'Use the dropdown above' : 'Choose from the list on the left'}</span>
     </div>`;
+
+  updateMobileStatus(chNum);
   updateProgressPill(chNum);
+}
+
+function updateMobileStatus(chNum) {
+  const { done, total } = getProgress(chNum);
+  const el = document.getElementById('mobile-edit-status');
+  if (el) el.textContent = done + ' / ' + total + ' done';
 }
 
 // ── TOGGLE EDIT COMPLETION ────────────────────────────────────────────────────
@@ -1318,11 +1648,21 @@ function toggleEdit(idx) {
   const nowDone = !isDone(chNum, idx);
   setDone(chNum, idx, nowDone);
 
-  // Update sidebar chip
+  // Update desktop sidebar chip
   const chip = document.querySelector(`#esb-${idx} .esb-status`);
   if (chip) {
     chip.textContent = nowDone ? 'Done' : 'Open';
     chip.className = 'esb-status ' + (nowDone ? 'done' : 'open');
+  }
+
+  // Update mobile dropdown option
+  const msel = document.getElementById('mobile-edit-select');
+  if (msel) {
+    const opt = msel.options[idx + 1]; // +1 for placeholder
+    if (opt) {
+      const e = CHAPTERS[chNum].edits[idx];
+      opt.textContent = `${String(idx+1).padStart(2,'0')}  ${nowDone ? '✓' : '○'}  ${e.name}`;
+    }
   }
 
   // Update detail panel status row
@@ -1337,6 +1677,7 @@ function toggleEdit(idx) {
   if (lbl) lbl.textContent = nowDone ? 'Mark open' : 'Mark done';
 
   updateProgressPill(chNum);
+  updateMobileStatus(chNum);
 }
 
 // ── LOAD EDIT DETAIL ──────────────────────────────────────────────────────────
@@ -1564,6 +1905,7 @@ function escHtml(str) {
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
+initState();
 loadChapter(1);
 </script>
 </body>
