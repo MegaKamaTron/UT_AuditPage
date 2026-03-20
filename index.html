@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Umbrella Theory — Chapter Bible</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap"
-    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
   <style>
     :root {
       --bg: #131313;
@@ -35,7 +35,73 @@
       --serif: 'EB Garamond', Georgia, serif;
       --mono: 'DM Mono', monospace;
       --tab-h: 48px;
+      /* Settings-controlled vars */
+      --font-body: 'EB Garamond', Georgia, serif;
+      --font-size-scale: 1;
     }
+
+    /* ── MOBILE SUMMARY COLLAPSE ────────────────────────── */
+    @media (max-width: 768px) {
+      .summary-collapsible {
+        max-height: 120px;
+        overflow: hidden;
+        position: relative;
+        transition: max-height 0.3s ease;
+      }
+      .summary-collapsible.expanded {
+        max-height: none;
+      }
+      .summary-collapsible:not(.expanded)::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 48px;
+        background: linear-gradient(transparent, var(--bg));
+      }
+      .summary-toggle {
+        display: block;
+        margin-top: 8px;
+        font-family: var(--mono);
+        font-size: 0.55rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--rose);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+      .summary-toggle:hover { text-decoration: underline; }
+    }
+    @media (min-width: 769px) {
+      .summary-toggle { display: none; }
+    }
+
+    /* ── LIGHT THEME ────────────────────────────────── */
+    [data-theme="light"] {
+      --bg:         #f4f0ea;
+      --bg-card:    #ede8e0;
+      --bg-inset:   #e8e2d8;
+      --bg-code:    #e2dbd0;
+      --border:     #ccc6bc;
+      --border-hi:  #b5afa6;
+      --text:       #2a2620;
+      --text-dim:   #6b6158;
+      --text-faint: #a09890;
+      --rose-bg:    #f5ece6;
+      --sage-bg:    #eaf0ea;
+      --gold-bg:    #f5f0e4;
+      --blue-bg:    #e6edf5;
+      --bg-code:    #ebe5da;
+    }
+
+    /* ── FONT MODES ─────────────────────────────────── */
+    [data-font="sans"]     { --font-body: 'Inter', system-ui, sans-serif; }
+    [data-font="dyslexic"] { --font-body: 'OpenDyslexic', sans-serif; }
+
+    /* ── FONT SIZE SCALE ────────────────────────────── */
+    [data-size="small"]  { --font-size-scale: 0.875; }
+    [data-size="large"]  { --font-size-scale: 1.175; }
 
     *,
     *::before,
@@ -53,7 +119,8 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: var(--serif);
+      font-family: var(--font-body);
+      font-size: calc(1rem * var(--font-size-scale, 1));
       line-height: 1.7;
       min-height: 100vh;
       display: flex;
@@ -1502,43 +1569,69 @@
         display: none !important;
       }
 
-      /* Sync bar */
+      /* Sync bar — label on top row, buttons fill row below */
       .sync-bar {
         padding: 10px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .sync-bar-label {
+        width: 100%;
+        margin-bottom: 4px;
+      }
+      .sync-bar-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+      }
+      .chapter-nav {
+        width: 100%;
+        min-width: unset;
+      }
+      .chapter-nav-wrap {
+        width: 100%;
       }
 
       /* Tab bar */
       .tab-bar {
         padding: 0 4px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-      }
-
-      .tab-bar::-webkit-scrollbar {
-        display: none;
+        flex-wrap: wrap;
+        overflow-x: visible;
+        height: auto;
       }
 
       .tab-btn {
         font-size: 0.5rem;
-        padding: 12px 14px 10px;
+        padding: 10px 14px 8px;
         letter-spacing: 0.12em;
         white-space: nowrap;
+        flex-shrink: 0;
       }
 
       /* Panels */
       .section-wrap {
-        padding: 24px 20px;
+        padding: 20px 16px;
       }
 
       /* Summary grid — single column */
       .summary-grid {
         grid-template-columns: 1fr;
-        margin-top: 24px;
+        margin-top: 16px;
       }
 
       .sg-cell {
-        padding: 28px 24px;
+        padding: 20px 18px;
+      }
+
+      .blurb {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+      }
+
+      .prose {
+        font-size: 0.88rem;
+        line-height: 1.7;
       }
 
       .vibe-quote {
@@ -1550,9 +1643,7 @@
       }
 
       .vibe-cell::before {
-        font-size: 10rem;
-        top: -16px;
-        left: 12px;
+        display: none;
       }
 
       /* Texture list */
@@ -1671,6 +1762,213 @@
         padding: 12px 10px 10px;
       }
     }
+    /* ── SETTINGS PANEL ─────────────────────────────── */
+    .settings-wrap { padding: 52px 60px; max-width: 860px; display: flex; flex-direction: column; gap: 48px; }
+    .settings-group { display: flex; flex-direction: column; gap: 20px; }
+    .settings-group-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .settings-row-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      min-width: 100px;
+    }
+    .settings-option-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .settings-option {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 2px;
+      border: 1px solid var(--border-hi);
+      background: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .settings-option:hover { border-color: var(--rose-dim); color: var(--rose); }
+    .settings-option.active { border-color: var(--sage); color: var(--sage); background: var(--sage-bg); }
+    .settings-text-input {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text);
+      padding: 6px 12px;
+      outline: none;
+      width: 100%;
+      max-width: 420px;
+      transition: border-color 0.15s;
+    }
+    .settings-text-input:focus { border-color: var(--rose-dim); }
+    .settings-save-btn {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 2px;
+      border: 1px solid var(--sage-dim);
+      color: var(--sage);
+      background: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .settings-save-btn:hover { background: var(--sage-bg); border-color: var(--sage); }
+
+    /* ── IMAGES PANEL ───────────────────────────────── */
+    .images-wrap { padding: 52px 60px; }
+    .images-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .images-upload-btn {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 2px;
+      border: 1px solid var(--rose-dim);
+      color: var(--rose);
+      background: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .images-upload-btn:hover { background: var(--rose-bg); }
+    .images-count-note {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: var(--text-faint);
+    }
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .image-thumb-card {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      background: var(--bg-inset);
+      cursor: pointer;
+      transition: border-color 0.15s;
+      position: relative;
+    }
+    .image-thumb-card:hover { border-color: var(--border-hi); }
+    .image-thumb-card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+    .image-thumb-footer {
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .image-thumb-name {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+    .image-thumb-del {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: var(--text-faint);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .image-thumb-del:hover { color: var(--rose); }
+    .images-empty {
+      color: var(--text-faint);
+      font-style: italic;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────── */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border: 1px solid var(--border-hi);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border-hi);
+      padding: 5px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lightbox-close:hover { color: var(--text); border-color: var(--text); }
+
+    /* ── MOOD TAG COLORS ────────────────────────────── */
+    .mood-tag-0 { color: var(--rose); border-color: var(--rose-dim); background: var(--rose-bg); }
+    .mood-tag-1 { color: var(--sage); border-color: var(--sage-dim); background: var(--sage-bg); }
+    .mood-tag-2 { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-bg); }
+    .mood-tag-3 { color: var(--blue); border-color: var(--blue-dim); background: var(--blue-bg); }
+
+    /* ── NAV PREV/NEXT PAIR ─────────────────────────── */
+    .nav-btn-pair { display: flex; justify-content: space-between; margin-top: 4px; gap: 8px; }
+    .nav-prev-btn, .nav-next-btn {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s;
+    }
+    .nav-prev-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); }
+    .nav-prev-btn:hover { border-color: var(--border-hi); color: var(--text); }
+    .nav-next-btn { background: var(--blue-bg); border: 1px solid var(--blue-dim); color: var(--blue); }
+    .nav-next-btn:hover { border-color: var(--blue); }
+
   </style>
 </head>
 
@@ -1698,10 +1996,10 @@
           <option value="8">Chapter 08 &mdash; Return in the Rain</option>
           <option value="9">Chapter 09 &mdash; A Little Lighter</option>
           <option value="10">Chapter 10 &mdash; Extra Ribbon</option>
-          <option value="11" disabled>Chapter 11 &nbsp; (pending)</option>
-          <option value="12" disabled>Chapter 12 &nbsp; (pending)</option>
-          <option value="13" disabled>Chapter 13 &nbsp; (pending)</option>
-          <option value="14" disabled>Chapter 14 &nbsp; (pending)</option>
+          <option value="11">Chapter 11 &mdash; First Snow</option>
+          <option value="12">Chapter 12 &mdash; Steady Progress</option>
+          <option value="13">Chapter 13 &mdash; Handoff</option>
+          <option value="14">Chapter 14 &mdash; What Comes Next</option>
         </select>
         <span class="chapter-nav-arrow">&#9660;</span>
       </div>
@@ -1713,8 +2011,9 @@
     <button class="tab-btn active" onclick="switchTab('summary')">Summary</button>
     <button class="tab-btn" onclick="switchTab('flavor')">Flavor &amp; Friction</button>
     <button class="tab-btn" onclick="switchTab('milestone')">Milestone Map</button>
-    <button class="tab-btn" onclick="switchTab('edits')">Edit Suite <span class="tab-progress"
-        id="edit-progress-pill"></span></button>
+    <button class="tab-btn" onclick="switchTab('edits')">Edit Suite <span class="tab-progress" id="edit-progress-pill"></span></button>
+    <button class="tab-btn always-enabled" onclick="switchTab('images')">Images</button>
+    <button class="tab-btn always-enabled" onclick="switchTab('settings')">Settings</button>
   </nav>
 
   <!-- SYNC TOOLBAR -->
@@ -1724,9 +2023,11 @@
   <!-- push that file to GitHub and both devices will see the same checkboxes.  -->
   <div class="sync-bar">
     <span class="sync-bar-label">Progress sync</span>
+    <div class="sync-bar-buttons">
     <button class="sync-btn primary" onclick="exportState()">Export</button>
     <button class="sync-btn" onclick="toggleImport()">Import</button>
     <button class="sync-btn" onclick="saveToFile()">Save to file</button>
+    </div>
     <span class="sync-toast" id="sync-toast"></span>
     <div class="sync-import-wrap" id="sync-import-wrap">
       <input class="sync-input" id="sync-input" placeholder="Paste exported state string here…" />
@@ -1742,7 +2043,8 @@
     <div class="section-wrap">
       <div class="section-label">Chapter Summary</div>
       <p class="blurb italic">"A woman who has optimized her life for the absence of surprise gets surprised."</p>
-      <p class="prose" id="summary-body"></p>
+      <p class="prose summary-collapsible" id="summary-body"></p>
+      <button class="summary-toggle" id="summary-toggle" onclick="toggleSummary()">Show more</button>
 
       <div class="summary-grid" id="summary-grid">
         <div class="sg-cell">
@@ -1757,7 +2059,7 @@
               <div id="mood-tags"></div>
               <button class="mood-add-btn" id="mood-add-btn" onclick="openMoodInput()" title="Add mood tag">+</button>
               <div class="mood-input-wrap" id="mood-input-wrap">
-                <input class="mood-input" id="mood-input" maxlength="10" placeholder="e.g. heavy" />
+                <input class="mood-input" id="mood-input" maxlength="20" placeholder="e.g. heavy rain" />
                 <button class="sync-btn primary" onclick="addMoodTag()">Add</button>
                 <button class="sync-btn" onclick="closeMoodInput()">Cancel</button>
               </div>
@@ -1837,6 +2139,80 @@
           <span class="placeholder-sub">Choose from the list on the left</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- IMAGES PANEL -->
+  <div class="panel" id="panel-images">
+    <div class="images-wrap">
+      <div class="section-label">Chapter Images</div>
+      <div class="images-toolbar">
+        <button class="images-upload-btn" onclick="triggerImageUpload()">+ Upload Image</button>
+        <span class="images-count-note" id="images-count-note">0 / 6 images &mdash; max 1920×1080</span>
+        <input type="file" id="image-file-input" accept="image/*" multiple style="display:none" onchange="handleImageUpload(this)">
+      </div>
+      <div class="images-grid" id="images-grid">
+        <p class="images-empty" id="images-empty">No images yet. Upload up to 6 reference images for this chapter.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">Close</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="panel" id="panel-settings">
+    <div class="settings-wrap">
+
+      <div class="settings-group">
+        <div class="settings-group-label">Display</div>
+
+        <div class="settings-row">
+          <span class="settings-row-label">Theme</span>
+          <div class="settings-option-group">
+            <button class="settings-option active" id="opt-theme-dark" onclick="setTheme('dark')">Dark</button>
+            <button class="settings-option" id="opt-theme-light" onclick="setTheme('light')">Light (Cream)</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <span class="settings-row-label">Font</span>
+          <div class="settings-option-group">
+            <button class="settings-option active" id="opt-font-serif" onclick="setFont('serif')">Serif</button>
+            <button class="settings-option" id="opt-font-sans" onclick="setFont('sans')">Sans-serif</button>
+            <button class="settings-option" id="opt-font-dyslexic" onclick="setFont('dyslexic')">Dyslexic</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <span class="settings-row-label">Font Size</span>
+          <div class="settings-option-group">
+            <button class="settings-option" id="opt-size-small" onclick="setSize('small')">Small</button>
+            <button class="settings-option active" id="opt-size-medium" onclick="setSize('medium')">Medium</button>
+            <button class="settings-option" id="opt-size-large" onclick="setSize('large')">Large</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-label">Project Identity</div>
+
+        <div class="settings-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+          <span class="settings-row-label">Project Title</span>
+          <input class="settings-text-input" id="settings-title-input" type="text" placeholder="Umbrella Theory" maxlength="60">
+        </div>
+
+        <div class="settings-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+          <span class="settings-row-label">Subtitle / Tagline</span>
+          <input class="settings-text-input" id="settings-sub-input" type="text" placeholder="Chapter Bible" maxlength="80">
+        </div>
+
+        <button class="settings-save-btn" onclick="saveProjectIdentity()">Save Changes</button>
+      </div>
+
     </div>
   </div>
 
@@ -3644,6 +4020,464 @@ CHAPTERS[10] = {
 };
 
 
+
+
+CHAPTERS[11] = {
+  id: 11,
+  title: "Chapter Eleven",
+  sub: "First Snow",
+  status: "Audit Complete",
+
+  summary: `Chapter Eleven is the warmest chapter in the project. Snow morning with Nagata, the alley break, the bar scene — it all earns its register. The bar conversation is the best sustained Nagata dialogue in the game: he's funny, sad, and specific without becoming a grief delivery vehicle. The 'Tomorrow. If she's there tomorrow…' closing across both home paths is the right note. What drifts: Saki announces a conclusion from Nagata's silence rather than letting the silence land. studiolightoon typo on both home paths. Widespread double-prefix sprite tags. Chapter card missing stop music.`,
+
+  vibe: ["Tomorrow.", "If she's there tomorrow…"],
+  vibeAttr: "si — both home paths / the chapter's closing note",
+
+  tally: { cut: 2, rewrite: 1, added: 0 },
+
+  structural: "Clean. All branches converge. rooftop_photo_taken flag correctly gates aya_text_rooftop_day11 call. FLAG: chapter_12_route_lock called at Ch12 opening — label not found in Chapter_12.rpy, must exist in a routing file. Verify before final build.",
+
+  textures: [
+    {
+      num: "01",
+      name: "Kana's Aim",
+      pull: "Her aim is far too good for someone so small. She got three good hits in before I was able to make it to the car.",
+      body: "Nagata's morning complaint about Kana throwing snowballs is the chapter's best opener. It establishes his warmth before the alley makes his exhaustion visible. Protect — do not cut for time."
+    },
+    {
+      num: "02",
+      name: "Fire Stairs As Draft Layer",
+      pull: "Fire stairs slicing down the side like a draft layer someone forgot to hide.",
+      body: "Saki's design brain mapping the world is at its best here — specific, technical, completely her. This is the metaphor that most accurately reflects how she actually sees. Protect."
+    },
+    {
+      num: "03",
+      name: "Emotionally Constipated",
+      pull: "Trust me, I don't say this lightly. I'm emotionally constipated.",
+      body: "Nagata's self-description is the best comedy beat in the chapter. It lands because it's followed by genuine warmth. Do not cut."
+    },
+    {
+      num: "04",
+      name: "Stale Crackers at the Counter",
+      pull: "I eat a stale box of crackers standing at the counter. Crumbs everywhere. / No regrets.",
+      body: "Tipsy Saki eating crackers at the counter instead of texting Harumi is exactly right. The small act of self-care over the romantic impulse is characterologically precise."
+    }
+  ],
+
+  milestoneIntro: "Chapter Eleven is the chapter with the most conditional NagataPoints on offer. The bar scene is the primary gate — drink count, honesty level, and the Round 3 question all feed into whether Nagata's letter or email triggers at the ending. The rooftop photo seeds the Aya thread callback.",
+  milestones: [
+    { name: "NagataPoints",     range: "+1–3 this chapter",  pct: 21, color: "bf-sage", note: "Ignore clack (+1) / send meme (+1) / let it sit (+1) / bar brave (+1)" },
+    { name: "SakiGrowthPoints", range: "+1–3 this chapter",  pct: 21, color: "bf-rose", note: "Eat snow (+1) / rooftop photo (+1) / bar brave (+1) / Round 3 yes/want to (+1) / quiet acceptance (+1)" },
+    { name: "HarumiPoints",     range: "+1 if bar brave",    pct: 7,  color: "bf-gold", note: "Bar: 'someone I want to be there for' (+1)" },
+    { name: "WorkPoints",       range: "+1 if meme sent",    pct: 7,  color: "bf-dim",  note: "Cat meme to Nagata (+1)" },
+    { name: "saki_tipsy",       range: "True if 2+ drinks",  pct: 0,  color: "bf-sage", note: "Gates tipsy home path — stale crackers vs quiet thinking" },
+    { name: "nagata_reassured", range: "True after alley",   pct: 0,  color: "bf-sage", note: "Set True at end of alley scene — required for nagata_letter gate" }
+  ],
+
+  devnote: "nagata_letter requires NagataPoints >= 6 AND nagata_reassured. This chapter is where nagata_reassured is set. Players who skip the alley scene (if there's a skip path) will be permanently blocked from the letter. Confirm no skip path exists. chapter_12_route_lock label must be verified in routing files.",
+
+  edits: [
+    {
+      id: 1, name: "That tells me enough — Saki reading Nagata's silence", layer: "dialogueVoice", location: "ch11_bar_round3", severity: "minor",
+      reason: "Saki notices behavior. She doesn't announce the conclusion she draws from it.",
+      before: `na "Okay."\nn "He doesn't joke."\nn "That tells me enough."`,
+      after:  `na "Okay."\nn "He doesn't joke."`
+    },
+    {
+      id: 2, name: "CRITICAL: studiolightoon typo — both home paths", layer: "technical", location: "ch11_walk_home_sober + ch11_walk_home_tipsy", severity: "critical",
+      reason: "Missing letter in image name. Will throw a missing asset error on both home paths.",
+      before: `show studiolightoon`,
+      after:  `show studiolighton`
+    },
+    {
+      id: 3, name: "Batched double-prefix sprite tags", layer: "visuals", location: "multiple", severity: "critical",
+      reason: "Fifteen confirmed double-prefix instances across the chapter — lobby, alley, bar scenes.",
+      before: `# Lines 136, 211, 293, 300, 520, 565, 575, 576, 637, 640, 642, 643, 647, 648, 655\ns s w [expression] (various)`,
+      after:  `# All corrected to single prefix\ns w [expression] (various)`
+    },
+    {
+      id: 4, name: "CRITICAL: stop music missing before chapter card", layer: "audio", location: "chapter card section", severity: "critical",
+      reason: "Same pattern as Chs. 04-10. Ambience stopped but music is not.",
+      before: `    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`,
+      after:  `    stop music fadeout 2.0\n    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`
+    }
+  ],
+
+  flags: [
+    { id: "F1", type: "routing", severity: "critical", note: "chapter_12_route_lock called at Ch12 line 12 but label not found in Chapter_12.rpy. Must exist in MasterEnding_Router.rpy or a route file. Verify before final build." },
+    { id: "F2", type: "pattern", severity: "info", note: "stop music before chapter card is now confirmed missing across Chs. 04-11. Strongly recommend a single batch pass on all remaining chapter cards rather than per-chapter fixes." }
+  ],
+
+  flavorMoments: [
+    "Kana's snowball aim — 'too good for someone so small.'",
+    "Fire stairs as draft layer — protect.",
+    "Emotionally constipated — protect.",
+    "Stale crackers at the counter / No regrets.",
+    "'Tomorrow. If she's there tomorrow…' — both home paths close on this."
+  ],
+
+  plantedDetails: [
+    { detail: "rooftop_photo_taken flag", status: "planted", note: "Gates aya_text_rooftop_day11 call. Payoff in Aya thread." },
+    { detail: "nagata_reassured = True", status: "active", note: "Set at end of alley scene. Required gate for nagata_letter in ending router." },
+    { detail: "Bar honesty branches", status: "active", note: "'Be brave' branch (+1 HP, +1 SGP) is the first time Saki says out loud that there's someone she wants to be there for." }
+  ],
+
+  clackInsertions: [
+    { line: 155, location: "ch11_work_start", text: "hey — did the melon thing work out? (Anya) — conditional on helped_anya" },
+    { line: 174, location: "ch11_work_start / Nagata menu", text: "Circling back on yesterday's meeting. (Boss)" }
+  ],
+
+  variablesTouched: [
+    { name: "SakiGrowthPoints", change: "+1",         condition: "eat snow" },
+    { name: "SakiGrowthPoints", change: "+1",         condition: "rooftop photo" },
+    { name: "rooftop_photo_taken", change: "True",    condition: "rooftop photo" },
+    { name: "NagataPoints",     change: "+1",         condition: "ignore clack during Nagata check-in" },
+    { name: "SakiGrowthPoints", change: "+1",         condition: "ignore clack during Nagata check-in" },
+    { name: "WorkPoints",       change: "+1",         condition: "send meme to Nagata" },
+    { name: "NagataPoints",     change: "+1",         condition: "send meme to Nagata" },
+    { name: "SakiGrowthPoints", change: "+1",         condition: "quiet acceptance in alley" },
+    { name: "nagata_reassured", change: "True",       condition: "end of alley scene" },
+    { name: "HarumiPoints",     change: "+1",         condition: "bar: be brave" },
+    { name: "SakiGrowthPoints", change: "+1",         condition: "bar: be brave" },
+    { name: "drink_count",      change: "+1 per round", condition: "each drink" },
+    { name: "saki_tipsy",       change: "True",       condition: "drink_count >= 2" },
+    { name: "SakiGrowthPoints", change: "+1",         condition: "Round 3: yes or I want to" }
+  ]
+};
+
+CHAPTERS[12] = {
+  id: 12,
+  title: "Chapter Twelve",
+  sub: "Steady Progress",
+  status: "Audit Complete",
+
+  summary: `Chapter Twelve is K-Bar's stated favorite chapter and earns it. The deployment meeting is excellent — the client lead walking past Saki without acknowledgment is quietly devastating, and Nagata's 'I wanted to say something' afterward is the chapter's moral center. The Anya breakroom scene is clean and earns its moment. The park scene is the most physically precise Harumi scene in the project. 'Asked permission for something small / when it doesn't feel small at all' is the chapter's best line. si "I like her." landing with the flag set is correctly restrained. What drifts: two Harumi lines in the opening bus stop scene that over-explain her emotional state. One closing narrator line that tips into composed reflection. Duplicate walk-to-bus-stop text from Ch14. stop music missing before chapter card.`,
+
+  vibe: ["I like her.", ""],
+  vibeAttr: "si — ch12_midpoint_busstop_return / the chapter's irreversible moment",
+
+  tally: { cut: 3, rewrite: 1, added: 0 },
+
+  structural: "Sound. saki_has_admitted_crush correctly set to True after the park scene. All therapy menu options resolve cleanly. Pre-bus-stop walk text is duplicated word-for-word with Ch14 opening — flag for K-Bar as intentional recurring motif or unintentional copy.",
+
+  textures: [
+    {
+      num: "01",
+      name: "He Walked Past Her",
+      pull: "He doesn't look at me. Doesn't nod. Just leaves.",
+      body: "The client lead shaking Nagata's hand and walking past Saki without acknowledgment is the chapter's most understated piece of workplace writing. Three short lines. No editorial. Nagata clocks it immediately. Protect entirely."
+    },
+    {
+      num: "02",
+      name: "Purple Umbrella Post-It",
+      pull: "A post-it note. Purple umbrella, drawn in pen. The lines are uneven.",
+      body: "Saki drew this without thinking about it during a lunch break. The moment of recognition ('When did I—') is Saki catching herself in an act of wanting. The uneven lines are important — she wasn't trying to make something good. Protect."
+    },
+    {
+      num: "03",
+      name: "Permission for Something Small",
+      pull: "The question is so careful. So gentle. / Like she's asking permission for something small. / When it doesn't feel small at all.",
+      body: "The chapter's best line and its structural emotional peak. The three-beat rhythm is exactly right. Do not touch."
+    },
+    {
+      num: "04",
+      name: "si I like her.",
+      pull: "I like her.",
+      body: "Two words. $ saki_has_admitted_crush = True. The chapter earns this admission across twelve chapters. Protect absolutely. No elaboration. No additional lines between this and the flag assignment."
+    }
+  ],
+
+  milestoneIntro: "Chapter Twelve is HarumiPoints-light by design — the chapter's reward is structural. The admission is the milestone. However, the pre-bus-stop walk and the park scene still offer HP gates for players who are fully on the Harumi route.",
+  milestones: [
+    { name: "HarumiPoints",     range: "0–1 this chapter",   pct: 7,  color: "bf-rose", note: "Ribbon callback observed (+0 — passive) / park physical closeness implicit" },
+    { name: "SakiGrowthPoints", range: "+0.5 conditional",   pct: 4,  color: "bf-gold", note: "Therapy 'just okay' or 'it feels different' (+0.5 each from Ch06 thread if not yet counted)" },
+    { name: "saki_has_admitted_crush", range: "True",        pct: 0,  color: "bf-rose", note: "Set at park scene end — gates Ch13/14 Harumi route variations" }
+  ],
+
+  devnote: "The pre-bus-stop walk (ch12_prebusstop) is word-for-word identical to the Ch14 pre-bus-stop walk. If intentional as a recurring motif (same route, different emotional state), add a small variation to signal the difference. If unintentional, fix one of them.",
+
+  edits: [
+    {
+      id: 1, name: "She says my name with a soft exhale — narrator explaining body language", layer: "dialogueVoice", location: "ch12_evening_encounter", severity: "moderate",
+      reason: "The preceding line already identifies Harumi. The exhale and relief are shown in the next lines. This sentence names what the reader should feel.",
+      before: `h "Saki."\nn "She says my name with a soft exhale. As if she's relieved."\ns "Long shift?"`,
+      after:  `h "Saki."\ns "Long shift?"`
+    },
+    {
+      id: 2, name: "I didn't think I'd be this glad to see someone — Harumi labeling affect", layer: "dialogueVoice", location: "ch12_evening_encounter", severity: "moderate",
+      reason: "Harumi is exhausted here, not in the mode of narrating her feelings. The preceding line already carries the weight.",
+      before: `h "I spent most of the afternoon thinking about how quiet the stop would be tonight."\nh "I didn't think I'd be this glad to see someone."`,
+      after:  `h "I spent most of the afternoon thinking about how quiet the stop would be tonight."`
+    },
+    {
+      id: 3, name: "The air feels easier to breathe — composed reflection", layer: "dialogueVoice", location: "ch12_evening_encounter", severity: "minor",
+      reason: "The scene has been handled with restraint. This closing narrator line tips into composed reflection that the scene doesn't need.",
+      before: `n "I watch her board, the purple ribbon on her umbrella handle the last thing I see before the doors hiss shut."\nn "The air feels easier to breathe now, even with the rain."`,
+      after:  `n "I watch her board, the purple ribbon on her umbrella handle the last thing I see before the doors hiss shut."`
+    },
+    {
+      id: 4, name: "CRITICAL: stop music missing before chapter card", layer: "audio", location: "chapter card section", severity: "critical",
+      reason: "bgm_park_theme started at ch12_midpoint_busstop_return is not stopped before chapter card.",
+      before: `    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`,
+      after:  `    stop music fadeout 2.0\n    stop ambience fadeout 2.0\n    $ renpy.pause(0.7)`
+    }
+  ],
+
+  flags: [
+    { id: "F1", type: "duplicate-text", severity: "moderate", note: "ch12_prebusstop walk (food stand, tea shop, clothing store) is word-for-word identical to ch14_lastday_busstop approach. Confirm intentional recurring motif or fix one. If intentional, a small variation in Saki's internal note would signal awareness of repetition." }
+  ],
+
+  flavorMoments: [
+    "Client lead walks past Saki without a nod — protect.",
+    "Purple umbrella post-it, lines uneven — protect.",
+    "'Permission for something small / when it doesn't feel small at all' — protect.",
+    "si 'I like her.' — protect absolutely.",
+    "Saki splashing her face twice at the sink."
+  ],
+
+  plantedDetails: [
+    { detail: "saki_has_admitted_crush = True", status: "active", note: "Gates Ch13/14 Harumi route morning text and post-it note sequences. Must fire correctly." },
+    { detail: "Light purple ribbon on umbrella handle", status: "callback", note: "Only appears if ribbon_choice == 'Light Purple' AND have_melon_pastry. The ribbon she chose is now on Harumi's umbrella. She kept it. No editorial needed." }
+  ],
+
+  clackInsertions: [],
+
+  variablesTouched: [
+    { name: "saki_has_admitted_crush", change: "True", condition: "park scene — si 'I like her.'" },
+    { name: "HarumiPoints",            change: "+1",   condition: "harumi_apology_count incremented (implicit)" }
+  ]
+};
+
+CHAPTERS[13] = {
+  id: 13,
+  title: "Chapter Thirteen",
+  sub: "Handoff",
+  status: "Audit Complete",
+
+  summary: `Chapter Thirteen is the project's most structurally complex chapter and handles it cleanly. The Dayglow presentation is well-paced and the handoff lands with the right lightness. Anya's desk visit is the chapter's best scene — 'You're allowed to be good at things' lands because she says it plainly, and the helped_anya conditional callback is exactly the right payoff for Ch07. The bodega scene is warm. Marco sketch callback is earned. Kana's bookmark having three conditional variations is robust route architecture. What drifts: Saki editorializes Anya's observation. Two narrator lines over-explain emotional cause. Double-prefix tag in bookmark scene. studiolightoon typo again. Critical indentation issue in the Marco sketch conditional.`,
+
+  vibe: ["Recognition, not rescue.", "Still…"],
+  vibeAttr: "si — ch13_anya_echo / after Anya delivers boss's feedback",
+
+  tally: { cut: 3, rewrite: 2, added: 0 },
+
+  structural: "CRITICAL: The if SakiGrowthPoints >= 7 and gave_marco_advice block at line 770 appears at top level with no label wrapper — likely parse error. Verify it belongs inside ch13_bodega_evening and indent accordingly. studiolightoon typo on two locations. Ch13 chapter card has stop music fadeout 2.0 at line 1080 — CONFIRMED PRESENT. Audio gap may already be fixed here.",
+
+  textures: [
+    {
+      num: "01",
+      name: "The Presentation Quiet",
+      pull: "No one reaches for their phone.",
+      body: "The detail that tells you the deck is working. Nothing else needed. Protect."
+    },
+    {
+      num: "02",
+      name: "Anya's Observation",
+      pull: "You don't make people feel small when they don't know something. / You give people room.",
+      body: "Both conditional versions of Anya's observation work. The helped_anya version ('You didn't make people feel small') is more specific and more earned. The fallback ('You give people room') is strong in its own right. Both protected."
+    },
+    {
+      num: "03",
+      name: "Marco's Sketch",
+      pull: "The shading... he actually used it. / Cross-hatching. Clean depth. No mud.",
+      body: "The payoff for a single piece of advice given on a receipt. The detail of the cross-hatching confirmed in the sketch is exactly right. Protect the specific technical language — it's Saki noticing as a designer, not as a mentor."
+    },
+    {
+      num: "04",
+      name: "Breakfast for Dinner",
+      pull: "Scrambled eggs, bacon, toast. / Breakfast for dinner.",
+      body: "Saki cooking actual food is a chapter-level character milestone. The Aya exchange that follows is the chapter's warmest beat. Protect both the cooking and the photo-to-Aya sequence."
+    }
+  ],
+
+  milestoneIntro: "Chapter Thirteen resolves nearly every secondary arc: Anya's growth, Marco's callback, Kana's bookmark, the Dayglow project. The bodega scene is the last major Fernando/Raffa point opportunity. The chapter's emotional weight is structural, not scored.",
+  milestones: [
+    { name: "SakiGrowthPoints", range: "+0.5–1 this chapter", pct: 7,  color: "bf-rose", note: "Admit truth to Nagata about breakfast (+0.5) / Half-truth bus stop answer (+0.5)" },
+    { name: "FernandoPoints",   range: "+1 if picked up",     pct: 7,  color: "bf-dim",  note: "Pick up Fernando (requires FernandoPoints >= 2 or fernando_saved) (+1 implicit via scene)" },
+    { name: "kana_bookmark_received", range: "True",          pct: 0,  color: "bf-sage", note: "Set in all three bookmark conditionals — always fires in Ch13" },
+    { name: "marco_art_callback", range: "True",              pct: 0,  color: "bf-sage", note: "Set if SakiGrowthPoints >= 7 AND gave_marco_advice — confirm parse" },
+    { name: "have_marco_sketch", range: "True",               pct: 0,  color: "bf-sage", note: "Set alongside marco_art_callback" }
+  ],
+
+  devnote: "The marco_art_callback conditional block (if SakiGrowthPoints >= 7 and gave_marco_advice) must be inside the ch13_bodega_evening label. Verify indentation in source file. If at top level, this is a parse error. The aya_rooftop_call_ch13 call at line 999 — confirm this label exists in aya_thread.rpy.",
+
+  edits: [
+    {
+      id: 1, name: "She noticed that all the way back then — editorializing Anya's observation", layer: "dialogueVoice", location: "ch13_anya_echo", severity: "moderate",
+      reason: "The preceding lines show Saki connecting Anya's words to Ch07. The si line closes off the reader's inference.",
+      before: `n "I think about the presentation."\nn "The way I looked at him, not at her."\nsi "She noticed that all the way back then."`,
+      after:  `n "I think about the presentation."\nn "The way I looked at him, not at her."`
+    },
+    {
+      id: 2, name: "That's not just the boss's opinion — double message", layer: "dialogueVoice", location: "ch13_anya_echo", severity: "minor",
+      reason: "Anya's exit line already delivers this. The setup line says the same thing twice.",
+      before: `anya "That's not just the boss's opinion."`,
+      after:  `(removed — go directly to menu)`
+    },
+    {
+      id: 3, name: "The thought sits strangely — labeling reaction", layer: "dialogueVoice", location: "ch13_home / both-gifts section", severity: "minor",
+      reason: "Saki would register physical sensation, not classify the quality of the thought.",
+      before: `si "When did I become someone teenagers think is worth impressing?"\nn "The thought sits strangely."\nn "Not uncomfortable. Just... unexpected."`,
+      after:  `si "When did I become someone teenagers think is worth impressing?"`
+    },
+    {
+      id: 4, name: "s s w curious double prefix + missing expression", layer: "visuals", location: "ch13_endofday + ch13_home", severity: "critical",
+      reason: "Double prefix on 'For me?' and missing expression on 'I'm home...'",
+      before: `s s w curious "For me?"\n...\ns s w "I'm home..."`,
+      after:  `s w curious "For me?"\n...\ns w neutral "I'm home..."`
+    },
+    {
+      id: 5, name: "studiolightoon typo — two instances", layer: "technical", location: "ch13_home + aya_call_scene", severity: "critical",
+      reason: "Missing letter. Will throw asset error.",
+      before: `show studiolightoon`,
+      after:  `show studiolighton`
+    }
+  ],
+
+  flags: [
+    { id: "F1", type: "parse-error-risk", severity: "critical", note: "if SakiGrowthPoints >= 7 and gave_marco_advice block at line 770 appears at top level — no label wrapper. Also play sound bodegachime / show bgblack at lines 795-800 are at top level. Confirm these belong inside ch13_bodega_evening and indent accordingly." },
+    { id: "F2", type: "label-check", severity: "moderate", note: "aya_rooftop_call_ch13 called at line 999 — confirm this label exists in aya_thread.rpy. Also aya_text_3_day11 referenced by rooftop_photo_taken gate — verify label name." },
+    { id: "F3", type: "audio-confirmed", severity: "info", note: "stop music fadeout 2.0 IS present at line 1080 before chapter card. Ch13 audio gap is already fixed. No action needed." }
+  ],
+
+  flavorMoments: [
+    "No one reaches for their phone — protect.",
+    "Anya's highlighter-smudged wrist.",
+    "Breakfast for dinner — actual eggs, actual effort.",
+    "Aya's vending machine curry response.",
+    "Coconut bar wrapper turned over in hand on rooftop."
+  ],
+
+  plantedDetails: [
+    { detail: "Marco sketch callback", status: "payoff", note: "Cross-hatching confirmed in Marco's refined sketch. Specific technical detail is the payoff — protect." },
+    { detail: "Kana bookmark — three conditional paths", status: "payoff", note: "All three fire kana_bookmark_received = True. Architecture is sound." },
+    { detail: "Harumi: 'She's cute' in bed", status: "active", note: "Only fires on Harumi route. Pillow over head. Ears hot. 'Annoying.' Perfect register. Protect." }
+  ],
+
+  clackInsertions: [
+    { line: 409, location: "ch13_office_day", text: "Amazing work on that deck! (A. Beles)" },
+    { line: 410, location: "ch13_office_day", text: "The style guide is so clean. (A. Beles)" },
+    { line: 413, location: "ch13_office_day", text: "We didn't die! Victory lap at lunch? (N. Sumeragi)" },
+    { line: 415, location: "ch13_office_day", text: "Brand system is solid. Thanks. (A. Beles)" }
+  ],
+
+  variablesTouched: [
+    { name: "SakiGrowthPoints",  change: "+0.5", condition: "admit truth to Nagata" },
+    { name: "kana_bookmark_received", change: "True", condition: "all bookmark paths" },
+    { name: "marco_art_callback", change: "True", condition: "SGP >= 7 AND gave_marco_advice" },
+    { name: "have_marco_sketch", change: "True", condition: "same as above" }
+  ]
+};
+
+CHAPTERS[14] = {
+  id: 14,
+  title: "Chapter Fourteen",
+  sub: "What Comes Next",
+  status: "Audit Complete",
+
+  summary: `Chapter Fourteen earns its quietness. The jacket collar moment is the chapter's best beat — tiny, physical, Harumi initiating, Saki's face catching fire, and then 'It's a good jacket.' The ribbon callback through the evening is well-handled. The coda_point_check logic is clean and correctly gated. The flashback structure works. 'For the first time in a long time, that doesn't scare me.' is the right final note before the endings. What drifts: one narrator line over-extends a rhythm that already landed. One self-aware si line that announces a prediction rather than having the thought arrive. One si line Saki could simply not have. No structural or route logic issues.`,
+
+  vibe: ["For the first time in a long time,", "that doesn't scare me."],
+  vibeAttr: "n — ch14_endflashback / final note before endings router",
+
+  tally: { cut: 2, rewrite: 1, added: 0 },
+
+  structural: "Sound. coda_point_check correctly flows to ending_master. All conditional ribbon paths verified. kana_approval conditional fires correctly. No dead ends. FLAG: bgm_saki_theme started at ch14_home_evening — no stop music before coda_point_check. Confirm endings router handles audio or add stop at coda start.",
+
+  textures: [
+    {
+      num: "01",
+      name: "The Jacket Collar",
+      pull: "She reaches over and tugs the collar of my jacket. Just once. Quick. Like she's straightening it. / It doesn't need straightening.",
+      body: "The chapter's best beat. Harumi initiates physical contact for the first time without rain or crisis as context. Saki's face catches fire. Protect completely. Do not add dialogue before or after 'It's a good jacket.'"
+    },
+    {
+      num: "02",
+      name: "The Bag Packed at 4:30",
+      pull: "My bag is already packed. / It's been packed since 4:30. / I'm not going to think about why.",
+      body: "The physical fact of the early-packed bag tells the whole story. Three lines. No elaboration needed. Protect."
+    },
+    {
+      num: "03",
+      name: "The Chipped-Fin Fish",
+      pull: "One of them — the one with the chipped fin — pauses near the front, stares at me for a second, then flicks away.",
+      body: "The first time a specific fish is individuated in the whole game. By Ch14, Saki knows which fish is which. This costs nothing and earns everything. Protect."
+    },
+    {
+      num: "04",
+      name: "That Doesn't Scare Me",
+      pull: "For the first time in a long time, that doesn't scare me.",
+      body: "The game's closing line before the endings. The simplest line in the chapter. Absolutely protect. Any version with more words is worse."
+    }
+  ],
+
+  milestoneIntro: "Chapter Fourteen's point assignments are final and feed directly into coda_point_check. The bus ride menu (+0.5 HP or +0.5 SGP) is the last choice before the router fires. The coda_point_check correctly evaluates all variables for ending tier assignments.",
+  milestones: [
+    { name: "HarumiPoints",     range: "+1–1.5 this chapter", pct: 7,  color: "bf-rose", note: "Jacket collar / boarding moment (+1) / phone menu (+0.5)" },
+    { name: "SakiGrowthPoints", range: "+0.5–1 this chapter", pct: 7,  color: "bf-gold", note: "Half-truth bus menu (+0.5) / stare out window (+0.5)" },
+    { name: "coda_point_check", range: "evaluates all",       pct: 0,  color: "bf-sage", note: "harumi_ending_tier / work_ending_tier / aya_ending_tier / coda_flavor / bodega_ending_tier / nagata_letter / nagata_email / anya_gift / anya_mention all set here" }
+  ],
+
+  devnote: "The debug log in coda_point_check (renpy.log lines) should be stripped before final release. Comment is already present in source. nagata_letter requires NagataPoints >= 6 AND nagata_reassured — the latter is set in Ch11. anya_gift requires AnyaPoints >= 3 — achievable only if Ch05 kind + Ch07 helped + Ch09 attending. Confirm max is reachable.",
+
+  edits: [
+    {
+      id: 1, name: "Enough to just exist — over-extends rhythm", layer: "dialogueVoice", location: "ch14_endflashback", severity: "minor",
+      reason: "The preceding three lines already build and complete this rhythm. The fourth tips into composed prose.",
+      before: `n "Enough to sit."\nn "Enough to breathe."\nn "Enough to feel the shape of the day settle without crushing me under it."\nn "Enough to just exist."`,
+      after:  `n "Enough to sit."\nn "Enough to breathe."\nn "Enough to feel the shape of the day settle without crushing me under it."`
+    },
+    {
+      id: 2, name: "I'm going to think about that for the rest of the night — announces prediction", layer: "dialogueVoice", location: "ch14_lastday_goodbye", severity: "minor",
+      reason: "Saki would have the thought arrive, not announce it as a prediction. Cut the second line.",
+      before: `si "I'm going to think about that for the rest of the night..."\nsi "-aren't I?"`,
+      after:  `si "I'm going to think about that for the rest of the night."`
+    },
+    {
+      id: 3, name: "I used to be better at this — self-aware catalog", layer: "dialogueVoice", location: "ch14_lastday_busstop", severity: "minor",
+      reason: "The following line is the actual thought. The preceding line announces it unnecessarily.",
+      before: `si "I used to be better at this."\nsi "Being around someone without losing my entire train of thought."`,
+      after:  `si "Being around someone without losing my entire train of thought."`
+    }
+  ],
+
+  flags: [
+    { id: "F1", type: "audio", severity: "moderate", note: "bgm_saki_theme started at ch14_home_evening (line 359) has no stop music before coda_point_check (line 535). Confirm ending_master handles audio teardown or add stop music at start of coda_point_check." },
+    { id: "F2", type: "release-cleanup", severity: "low", note: "Debug renpy.log lines in coda_point_check should be stripped before final build. Source comment already notes this." },
+    { id: "F3", type: "max-score-verify", severity: "moderate", note: "anya_gift requires AnyaPoints >= 3. Achievable only via Ch05 kind (+1) + Ch07 helped (+1) + Ch09 attending (+1). Confirm no other path awards AnyaPoints and that all three are reachable in a single run." }
+  ],
+
+  flavorMoments: [
+    "Bag packed since 4:30.",
+    "The nicer jacket — 'it was just closer to the door.'",
+    "Jacket collar tugged — protect.",
+    "Chipped-fin fish pausing at the glass.",
+    "'For the first time in a long time, that doesn't scare me.' — protect."
+  ],
+
+  plantedDetails: [
+    { detail: "Ribbon brought to bus stop", status: "payoff", note: "The ribbon Saki chose in Ch10 and kept appears again. She brought it for a reason she was too embarrassed to admit. No payoff shown — the act of bringing it is the payoff." },
+    { detail: "coda_point_check", status: "active", note: "All ending tier variables set here. Debug log should be stripped. nagata_letter, anya_gift, anya_mention all correctly evaluated." }
+  ],
+
+  clackInsertions: [],
+
+  variablesTouched: [
+    { name: "HarumiPoints",     change: "+1",   condition: "jacket collar moment / goodbye scene" },
+    { name: "HarumiPoints",     change: "+0.5", condition: "bus: open phone / look at her name" },
+    { name: "SakiGrowthPoints", change: "+0.5", condition: "bus: stare out window" },
+    { name: "SakiGrowthPoints", change: "+0.5", condition: "half-truth bus stop answer" },
+    { name: "harumi_ending_tier", change: "set", condition: "coda_point_check evaluation" },
+    { name: "work_ending_tier",   change: "set", condition: "coda_point_check evaluation" },
+    { name: "aya_ending_tier",    change: "set", condition: "coda_point_check evaluation" },
+    { name: "coda_flavor",        change: "set", condition: "coda_point_check evaluation" },
+    { name: "bodega_ending_tier", change: "set", condition: "coda_point_check evaluation" },
+    { name: "nagata_letter",      change: "set", condition: "coda_point_check evaluation" },
+    { name: "nagata_email",       change: "set", condition: "coda_point_check evaluation" },
+    { name: "anya_gift",          change: "set", condition: "coda_point_check evaluation" },
+    { name: "anya_mention",       change: "set", condition: "coda_point_check evaluation" }
+  ]
+};
     // ── CHAPTER SWITCHER ──────────────────────────────────────────────────────────
 
     function switchChapter(ch) {
@@ -3657,18 +4491,22 @@ CHAPTERS[10] = {
         document.getElementById('panel-flavor').classList.remove('active');
         document.getElementById('panel-milestone').classList.remove('active');
         document.getElementById('panel-edits').classList.remove('active');
+        document.getElementById('panel-images').classList.remove('active');
+        document.getElementById('panel-settings').classList.remove('active');
         document.getElementById('panel-placeholder').classList.add('active');
         document.getElementById('ph-title').textContent = `Chapter ${String(chNum).padStart(2, '0')} — not yet available`;
         document.getElementById('current-chapter-title').textContent = `Chapter ${chNum < 10 ? '0' + chNum : chNum}`;
         document.getElementById('current-chapter-sub').textContent = 'Pending audit';
         document.getElementById('status-badge').textContent = 'Pending';
-        document.querySelectorAll('.tab-btn').forEach(b => b.disabled = true);
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          if (!b.classList.contains('always-enabled')) b.disabled = true;
+        });
       }
     }
 
     function loadChapter(chNum) {
       const ch = CHAPTERS[chNum];
-      document.querySelectorAll('.tab-btn').forEach(b => b.disabled = false);
+      document.querySelectorAll('.tab-btn').forEach(b => b.disabled = false); // re-enable all
       document.getElementById('panel-placeholder').classList.remove('active');
       document.getElementById('current-chapter-title').textContent = ch.title;
       document.getElementById('current-chapter-sub').textContent = ch.sub;
@@ -3695,8 +4533,14 @@ CHAPTERS[10] = {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('panel-' + id).classList.add('active');
       const btns = document.querySelectorAll('.tab-btn');
-      const map = { summary: 0, flavor: 1, milestone: 2, edits: 3 };
+      const map = { summary: 0, flavor: 1, milestone: 2, edits: 3, images: 4, settings: 5 };
       if (map[id] !== undefined) btns[map[id]].classList.add('active');
+      if (id === 'images') renderImages();
+      // Settings and Images are always accessible — mark their tab active regardless
+      if (id === 'images' || id === 'settings') {
+        const btn = document.getElementById('tab-' + id);
+        if (btn) btn.classList.add('active');
+      }
     }
 
     // ── BUILD TEXTURES ────────────────────────────────────────────────────────────
@@ -3742,18 +4586,22 @@ CHAPTERS[10] = {
         document.getElementById('panel-flavor').classList.remove('active');
         document.getElementById('panel-milestone').classList.remove('active');
         document.getElementById('panel-edits').classList.remove('active');
+        document.getElementById('panel-images').classList.remove('active');
+        document.getElementById('panel-settings').classList.remove('active');
         document.getElementById('panel-placeholder').classList.add('active');
         document.getElementById('ph-title').textContent = `Chapter ${String(chNum).padStart(2, '0')} — not yet available`;
         document.getElementById('current-chapter-title').textContent = `Chapter ${chNum < 10 ? '0' + chNum : chNum}`;
         document.getElementById('current-chapter-sub').textContent = 'Pending audit';
         document.getElementById('status-badge').textContent = 'Pending';
-        document.querySelectorAll('.tab-btn').forEach(b => b.disabled = true);
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          if (!b.classList.contains('always-enabled')) b.disabled = true;
+        });
       }
     }
 
     function loadChapter(chNum) {
       const ch = CHAPTERS[chNum];
-      document.querySelectorAll('.tab-btn').forEach(b => b.disabled = false);
+      document.querySelectorAll('.tab-btn').forEach(b => b.disabled = false); // re-enable all
       document.getElementById('panel-placeholder').classList.remove('active');
       document.getElementById('current-chapter-title').textContent = ch.title;
       document.getElementById('current-chapter-sub').textContent = ch.sub;
@@ -3780,8 +4628,14 @@ CHAPTERS[10] = {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('panel-' + id).classList.add('active');
       const btns = document.querySelectorAll('.tab-btn');
-      const map = { summary: 0, flavor: 1, milestone: 2, edits: 3 };
+      const map = { summary: 0, flavor: 1, milestone: 2, edits: 3, images: 4, settings: 5 };
       if (map[id] !== undefined) btns[map[id]].classList.add('active');
+      if (id === 'images') renderImages();
+      // Settings and Images are always accessible — mark their tab active regardless
+      if (id === 'images' || id === 'settings') {
+        const btn = document.getElementById('tab-' + id);
+        if (btn) btn.classList.add('active');
+      }
     }
 
     // ── BUILD TEXTURES ────────────────────────────────────────────────────────────
@@ -4109,9 +4963,9 @@ CHAPTERS[10] = {
       <textarea class="notes-editor" id="notes-${idx}" placeholder="e.g. Boss should refer to Saki by last name — Tanaka." oninput="saveNote(${idx})">${loadNote(chNum, idx)}</textarea>
     </div>
 
-    <div style="display:flex;justify-content:space-between;margin-top:4px">
-      ${idx > 0 ? `<button class="load-after-btn" onclick="loadEdit(${idx - 1})">&larr; Previous</button>` : '<span></span>'}
-      ${idx < total - 1 ? `<button class="preview-btn" onclick="loadEdit(${idx + 1})">Next &rarr;</button>` : '<span></span>'}
+    <div class="nav-btn-pair">
+      ${idx > 0 ? `<button class="nav-prev-btn" onclick="loadEdit(${idx - 1})">&larr; Previous</button>` : '<span></span>'}
+      ${idx < total - 1 ? `<button class="nav-next-btn" onclick="loadEdit(${idx + 1})">Next &rarr;</button>` : '<span></span>'}
     </div>
   `;
     }
@@ -4184,10 +5038,9 @@ CHAPTERS[10] = {
       const addBtn = document.getElementById('mood-add-btn');
       if (!container) return;
       container.innerHTML = moods.map((m, i) =>
-        `<span class="mood-tag">${escHtml(m)}<button class="mood-tag-remove" onclick="removeMoodTag(${i})" title="Remove">&times;</button></span>`
+        `<span class="mood-tag mood-tag-${i}">${escHtml(m)}<button class="mood-tag-remove" onclick="removeMoodTag(${i})" title="Remove">&times;</button></span>`
       ).join('');
-      // Hide add button if at max
-      if (addBtn) addBtn.style.display = moods.length >= 2 ? 'none' : 'flex';
+      if (addBtn) addBtn.style.display = moods.length >= 4 ? 'none' : 'flex';
     }
 
     function openMoodInput() {
@@ -4202,10 +5055,10 @@ CHAPTERS[10] = {
 
     function addMoodTag() {
       const chNum = parseInt(document.getElementById('chapterNav').value);
-      const val = document.getElementById('mood-input').value.trim().slice(0, 10);
+      const val = document.getElementById('mood-input').value.trim().slice(0, 20);
       if (!val) return;
       const moods = getMoods(chNum);
-      if (moods.length >= 2) return;
+      if (moods.length >= 4) return;
       moods.push(val);
       saveMoods(chNum, moods);
       closeMoodInput();
@@ -4345,10 +5198,207 @@ CHAPTERS[10] = {
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    function toggleSummary() {
+      const el = document.getElementById('summary-body');
+      const btn = document.getElementById('summary-toggle');
+      if (!el || !btn) return;
+      const expanded = el.classList.toggle('expanded');
+      btn.textContent = expanded ? 'Show less' : 'Show more';
+    }
+
+    // ── SETTINGS ─────────────────────────────────────────────────────────────────
+
+    function loadSettings() {
+      const theme = localStorage.getItem('ut_theme') || 'dark';
+      const font  = localStorage.getItem('ut_font')  || 'serif';
+      const size  = localStorage.getItem('ut_size')  || 'medium';
+      applyTheme(theme, false);
+      applyFont(font, false);
+      applySize(size, false);
+      const title = localStorage.getItem('ut_project_title');
+      const sub   = localStorage.getItem('ut_project_sub');
+      if (title) {
+        document.getElementById('current-chapter-title') && (document.querySelector('.chapter-title') || {textContent:''}).textContent;
+        document.title = title + ' — Chapter Bible';
+        const el = document.querySelector('.series-label');
+        if (el) el.textContent = title + ' — Chapter Bible';
+      }
+      const ti = document.getElementById('settings-title-input');
+      const si = document.getElementById('settings-sub-input');
+      if (ti) ti.value = title || '';
+      if (si) si.value = sub || '';
+    }
+
+    function setTheme(val) { applyTheme(val, true); }
+    function setFont(val)  { applyFont(val, true); }
+    function setSize(val)  { applySize(val, true); }
+
+    function applyTheme(val, save) {
+      document.documentElement.setAttribute('data-theme', val === 'light' ? 'light' : '');
+      document.querySelectorAll('[id^="opt-theme-"]').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('opt-theme-' + val);
+      if (btn) btn.classList.add('active');
+      if (save) localStorage.setItem('ut_theme', val);
+    }
+
+    function applyFont(val, save) {
+      document.documentElement.setAttribute('data-font', val === 'serif' ? '' : val);
+      document.querySelectorAll('[id^="opt-font-"]').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('opt-font-' + val);
+      if (btn) btn.classList.add('active');
+      if (save) localStorage.setItem('ut_font', val);
+    }
+
+    function applySize(val, save) {
+      document.documentElement.setAttribute('data-size', val === 'medium' ? '' : val);
+      document.querySelectorAll('[id^="opt-size-"]').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('opt-size-' + val);
+      if (btn) btn.classList.add('active');
+      if (save) localStorage.setItem('ut_size', val);
+    }
+
+    function saveProjectIdentity() {
+      const title = document.getElementById('settings-title-input').value.trim();
+      const sub   = document.getElementById('settings-sub-input').value.trim();
+      if (title) {
+        localStorage.setItem('ut_project_title', title);
+        document.title = title + ' — Chapter Bible';
+        const sl = document.querySelector('.series-label');
+        if (sl) sl.textContent = title + ' — Chapter Bible';
+      }
+      if (sub) {
+        localStorage.setItem('ut_project_sub', sub);
+        const footer = document.querySelector('.footer-r');
+        if (footer) footer.textContent = sub;
+      }
+      const btn = document.querySelector('.settings-save-btn');
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = 'Saved';
+        btn.style.color = 'var(--sage)';
+        setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1600);
+      }
+    }
+
+    // ── IMAGES ───────────────────────────────────────────────────────────────────
+
+    function imagesKey(chNum) { return 'ut_images_ch' + chNum; }
+
+    function getImages(chNum) {
+      try { return JSON.parse(localStorage.getItem(imagesKey(chNum))) || []; }
+      catch { return []; }
+    }
+
+    function saveImages(chNum, imgs) {
+      try {
+        localStorage.setItem(imagesKey(chNum), JSON.stringify(imgs));
+        return true;
+      } catch(e) {
+        alert('Storage full. Try removing existing images first.');
+        return false;
+      }
+    }
+
+    function triggerImageUpload() {
+      const chNum = parseInt(document.getElementById('chapterNav').value);
+      const imgs = getImages(chNum);
+      if (imgs.length >= 6) { alert('Maximum 6 images per chapter.'); return; }
+      document.getElementById('image-file-input').click();
+    }
+
+    function handleImageUpload(input) {
+      const chNum = parseInt(document.getElementById('chapterNav').value);
+      const files = Array.from(input.files);
+      const imgs = getImages(chNum);
+      const remaining = 6 - imgs.length;
+      const toProcess = files.slice(0, remaining);
+
+      let processed = 0;
+      toProcess.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Resize to max 1920x1080 via canvas
+          const img = new Image();
+          img.onload = function() {
+            const MAX_W = 1920, MAX_H = 1080;
+            let w = img.width, h = img.height;
+            if (w > MAX_W || h > MAX_H) {
+              const ratio = Math.min(MAX_W / w, MAX_H / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            const current = getImages(chNum);
+            if (current.length < 6) {
+              current.push({ name: file.name, src: dataUrl });
+              if (saveImages(chNum, current)) renderImages();
+            }
+            processed++;
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      input.value = '';
+    }
+
+    function renderImages() {
+      const chNum = parseInt(document.getElementById('chapterNav').value);
+      const imgs = getImages(chNum);
+      const grid = document.getElementById('images-grid');
+      const empty = document.getElementById('images-empty');
+      const note = document.getElementById('images-count-note');
+      if (!grid) return;
+      note.textContent = imgs.length + ' / 6 images — max 1920×1080';
+      if (imgs.length === 0) {
+        grid.innerHTML = '<p class="images-empty" id="images-empty">No images yet. Upload up to 6 reference images for this chapter.</p>';
+        return;
+      }
+      grid.innerHTML = imgs.map((img, i) => `
+        <div class="image-thumb-card" onclick="openLightbox('${escHtml(img.src)}')">
+          <img src="${escHtml(img.src)}" alt="${escHtml(img.name)}" loading="lazy">
+          <div class="image-thumb-footer">
+            <span class="image-thumb-name">${escHtml(img.name)}</span>
+            <button class="image-thumb-del" onclick="deleteImage(event,${i})" title="Remove">&times;</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteImage(e, idx) {
+      e.stopPropagation();
+      const chNum = parseInt(document.getElementById('chapterNav').value);
+      const imgs = getImages(chNum);
+      imgs.splice(idx, 1);
+      saveImages(chNum, imgs);
+      renderImages();
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox(e) {
+      if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+        document.getElementById('lightbox').classList.remove('open');
+        document.getElementById('lightbox-img').src = '';
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
+    });
+
+
     // ── INIT ──────────────────────────────────────────────────────────────────────
 
     initState();
     loadChapter(1);
+    loadSettings();
 
   </script>
 </body>
