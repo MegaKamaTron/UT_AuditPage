@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Story Audit Tool</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/eclipse.min.css" rel="stylesheet">
 <style>
 /* ================================
    DESIGN TOKENS
@@ -28,6 +31,31 @@ html[data-theme="light"],[data-theme="light"]{
   --border:#cfc8bc;--border-light:#c0b9ad;--text:#2a2420;--text-muted:#7a6b5d;--text-faint:#a89580;
   --shadow:0 2px 8px rgba(0,0,0,0.1);--shadow-lg:0 4px 20px rgba(0,0,0,0.15);
 }
+html[data-theme="purple"],[data-theme="purple"]{
+  --bg:#1a1224;--bg-surface:#221830;--bg-elevated:#2c2040;--bg-hover:#342850;
+  --border:#4a3868;--border-light:#5e4a80;--text:#e8dff8;--text-muted:#a890c8;--text-faint:#6e5890;
+  --rose:#e07ab0;--rose-dim:rgba(224,122,176,0.13);--sage:#7ac8a8;--sage-dim:rgba(122,200,168,0.13);
+  --gold:#c8a8e8;--gold-dim:rgba(200,168,232,0.13);--blue:#88a8e8;--blue-dim:rgba(136,168,232,0.13);
+  --shadow:0 2px 8px rgba(0,0,0,0.4);--shadow-lg:0 4px 20px rgba(0,0,0,0.5);
+}
+html[data-theme="gray"],[data-theme="gray"]{
+  --bg:#f4f4f5;--bg-surface:#ebebec;--bg-elevated:#e2e2e4;--bg-hover:#d8d8da;
+  --border:#c8c8cc;--border-light:#b8b8bc;--text:#1a1a1e;--text-muted:#606068;--text-faint:#9898a0;
+  --rose:#c04040;--rose-dim:rgba(192,64,64,0.1);--sage:#2a7a50;--sage-dim:rgba(42,122,80,0.1);
+  --gold:#8a6020;--gold-dim:rgba(138,96,32,0.1);--blue:#2860a8;--blue-dim:rgba(40,96,168,0.1);
+  --shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-lg:0 4px 20px rgba(0,0,0,0.12);
+}
+html[data-theme="rainbow"],[data-theme="rainbow"]{
+  --bg:#14121e;--bg-surface:#1c1a2c;--bg-elevated:#24213a;--bg-hover:#2e2a48;
+  --border:#3a3558;--border-light:#4e4878;--text:#f0eeff;--text-muted:#a8a0d0;--text-faint:#6860a0;
+  --rose:#ff6b8a;--rose-dim:rgba(255,107,138,0.15);--sage:#56e0a0;--sage-dim:rgba(86,224,160,0.15);
+  --gold:#ffd060;--gold-dim:rgba(255,208,96,0.15);--blue:#60b0ff;--blue-dim:rgba(96,176,255,0.15);
+  --shadow:0 2px 8px rgba(0,0,0,0.4);--shadow-lg:0 4px 20px rgba(0,0,0,0.5);
+}
+html[data-theme="rainbow"] body::after{content:'';position:fixed;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#ff6b8a,#ffd060,#56e0a0,#60b0ff,#c060ff,#ff6b8a);
+  background-size:200% 100%;animation:rainbowShift 6s linear infinite;z-index:9999;pointer-events:none;}
+@keyframes rainbowShift{0%{background-position:0% 0%}100%{background-position:200% 0%}}
 html[data-theme="cream"],[data-theme="cream"]{
   --bg:#f0e9db;--bg-surface:#e8e0d0;--bg-elevated:#dfd5c3;--bg-hover:#d6ccb8;
   --border:#c8bfad;--border-light:#b8ae9a;--text:#2a2420;--text-muted:#7a6b5d;--text-faint:#a89580;
@@ -35,6 +63,7 @@ html[data-theme="cream"],[data-theme="cream"]{
 html[data-fontsize="sm"]{font-size:15px;}html[data-fontsize="md"]{font-size:17px;}html[data-fontsize="lg"]{font-size:19px;}
 html[data-font="sans"]{--font-body:system-ui,-apple-system,sans-serif;}
 html[data-font="dyslexic"]{--font-body:'OpenDyslexic',system-ui,sans-serif;}
+html[data-font="code"]{--font-body:'Fira Code','DM Mono','Courier New',monospace;}
 @font-face{font-family:'OpenDyslexic';src:url('https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/fonts/OpenDyslexic-Regular.otf');font-weight:400;}
 
 /* ================================
@@ -936,7 +965,7 @@ html[data-theme="dark"] body::before {
 #draft-center #draft-editor-wrap .ql-container { border: none !important; }
 #draft-center #draft-editor-wrap .ql-editor {
   min-height: calc(100vh - 200px);
-  padding: 2rem 2.5rem;
+  padding: 3rem 2.5rem;
   padding-bottom: 4rem;
 }
 .draft-center-footer {
@@ -1779,6 +1808,241 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
   cursor: default;
 }
 
+
+/* ─── SCENE SEPARATOR LINES ────────────────────────────────────── */
+#draft-editor-wrap .ql-editor hr.scene-sep {
+  display: block;
+  width: 50%;
+  margin: 1rem auto;
+  background: none;
+  height: 0;
+  padding: 0;
+}
+#draft-editor-wrap .ql-editor hr.sep-thin   { border: none; border-top: 1px solid var(--border-light); }
+#draft-editor-wrap .ql-editor hr.sep-medium { border: none; border-top: 2px solid var(--text-faint); }
+#draft-editor-wrap .ql-editor hr.sep-dashed { border: none; border-top: 2px dashed var(--border-light); }
+
+
+/* ─── STORY PICKER ──────────────────────────────────────────────── */
+.sp-story-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+  transition: background 0.1s;
+}
+.sp-story-row:hover { background: var(--bg-hover); }
+.sp-story-row.active { color: var(--gold); font-weight: 500; }
+.sp-story-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-story-chevron { font-size: 0.7rem; opacity: 0.45; flex-shrink: 0; transition: transform 0.15s; }
+.sp-story-row.expanded .sp-story-chevron { /* chevron char swapped by JS */ }
+.sp-chapters { display: none; background: var(--bg-surface); }
+.sp-chapters.open { display: block; }
+.sp-chapter-row {
+  display: flex;
+  align-items: center;
+  padding: 0.38rem 0.8rem 0.38rem 1.6rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  gap: 0.4rem;
+  transition: background 0.1s;
+}
+.sp-chapter-row:last-child { border-bottom: none; }
+.sp-chapter-row:hover { background: var(--bg-hover); color: var(--text); }
+.sp-chapter-row.active { color: var(--gold); font-weight: 500; }
+.sp-chapter-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border-light); flex-shrink: 0; }
+.sp-chapter-row.active .sp-chapter-dot { background: var(--gold); }
+.sp-add-chapter { opacity: 0.6; }
+.sp-add-chapter:hover { opacity: 1; }
+.story-picker-trigger { font-family: var(--font-body); }
+
+
+/* ─── STORIES PANEL ────────────────────────────────────────────── */
+.stories-panel-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s;
+}
+.stories-panel-card:hover { border-color: var(--border-light); }
+.stories-panel-card.is-active { border-color: var(--gold); }
+.spc-header {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem 1.1rem;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.spc-header:hover { background: var(--bg-hover); }
+.spc-title { font-size: 1rem; font-weight: 500; flex: 1; }
+.spc-active-badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gold); border: 1px solid rgba(201,168,76,0.4); background: var(--gold-dim); padding: 0.1em 0.45em; border-radius: 20px; }
+.spc-open-btn { font-size: 0.78rem; padding: 0.28em 0.7em; }
+.spc-stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr) 2fr;
+  gap: 0;
+}
+.spc-stat {
+  padding: 0.6rem 0.9rem;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.spc-stat:last-child { border-right: none; text-align: left; }
+.spc-stat-num { font-size: 1.1rem; font-weight: 500; color: var(--text); font-family: var(--font-mono); line-height: 1; }
+.spc-stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-top: 0.15rem; }
+.spc-progress-wrap { padding: 0.6rem 0.9rem; display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; }
+.spc-progress-bar { height: 4px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden; }
+.spc-progress-fill { height: 100%; background: var(--sage); border-radius: 2px; transition: width 0.4s; }
+.spc-chapters-list { border-top: 1px solid var(--border); }
+.spc-ch-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.1rem; border-bottom: 1px solid var(--border); font-size: 0.83rem; cursor: pointer; transition: background 0.1s; }
+.spc-ch-row:last-child { border-bottom: none; }
+.spc-ch-row:hover { background: var(--bg-hover); }
+.spc-ch-status { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.1em 0.4em; border-radius: 20px; border: 1px solid; flex-shrink: 0; }
+.spc-ch-words { font-size: 0.75rem; color: var(--text-faint); font-family: var(--font-mono); margin-left: auto; }
+.spc-ch-edits { font-size: 0.72rem; color: var(--text-faint); }
+
+/* ─── HOME SPOTLIGHT ────────────────────────────────────────────── */
+.home-spotlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.6rem; }
+.hsg-stat { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.5rem 0.75rem; }
+.hsg-num { font-size: 1.15rem; font-weight: 500; font-family: var(--font-mono); color: var(--text); line-height: 1; }
+.hsg-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-top: 0.1rem; }
+
+
+/* ─── CODE EDITOR MODE ─────────────────────────────────────────── */
+#code-editor-wrap {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+#code-editor-wrap.active { display: flex; }
+#code-editor-wrap .CodeMirror {
+  flex: 1;
+  height: 100%;
+  font-family: 'Fira Code', 'DM Mono', 'Courier New', monospace;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  border: none;
+}
+/* Light themes */
+html[data-theme="light"] #code-editor-wrap .CodeMirror,
+html[data-theme="cream"] #code-editor-wrap .CodeMirror,
+html[data-theme="gray"]  #code-editor-wrap .CodeMirror {
+  background: #f8f8f8;
+}
+/* Code mode language badge */
+#code-lang-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-faint);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.1em 0.45em;
+  z-index: 10;
+  pointer-events: none;
+}
+/* Code word count note */
+#code-word-note {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  font-style: italic;
+}
+/* Code mode: hide Quill prose elements */
+#draft-editor-wrap.code-mode-on { display: none; }
+
+
+/* ─── RAINBOW MODE: pastel tabs ─────────────────────────────────── */
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(1)  { --rb: rgba(255,107,138,0.15); --rba: #ff6b8a; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(2)  { --rb: rgba(255,165,80,0.15);  --rba: #ffa550; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(3)  { --rb: rgba(255,220,60,0.15);  --rba: #ffdc3c; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(4)  { --rb: rgba(86,224,160,0.15);  --rba: #56e0a0; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(5)  { --rb: rgba(96,176,255,0.15);  --rba: #60b0ff; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(6)  { --rb: rgba(160,100,255,0.15); --rba: #a064ff; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(7)  { --rb: rgba(255,107,200,0.15); --rba: #ff6bc8; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(8)  { --rb: rgba(86,200,255,0.15);  --rba: #56c8ff; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(9)  { --rb: rgba(160,220,80,0.15);  --rba: #a0dc50; }
+html[data-theme="rainbow"] #tab-bar .tab-btn:nth-child(10) { --rb: rgba(255,160,86,0.15);  --rba: #ffa056; }
+html[data-theme="rainbow"] #tab-bar .tab-btn {
+  background: var(--rb, transparent);
+  color: var(--rba, var(--text-muted));
+  border-bottom: 2px solid transparent;
+}
+html[data-theme="rainbow"] #tab-bar .tab-btn.active {
+  border-bottom-color: var(--rba, var(--gold));
+  color: var(--rba, var(--gold));
+  background: var(--rb, transparent);
+  font-weight: 600;
+}
+html[data-theme="rainbow"] #tab-bar .tab-btn:hover {
+  background: var(--rb, var(--bg-hover));
+  opacity: 0.9;
+}
+/* Draft toolbar: dark gradient background */
+html[data-theme="rainbow"] #draft-top-toolbar,
+html[data-theme="rainbow"] #draft-beta-toolbar {
+  background: linear-gradient(90deg,#1e0a14,#1a0e22,#0e1628,#0e2018,#1a1408);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+html[data-theme="rainbow"] .tb-btn { color: rgba(255,255,255,0.7); }
+html[data-theme="rainbow"] .tb-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+html[data-theme="rainbow"] .tb-divider { background: rgba(255,255,255,0.12); }
+/* Right stats cards: dark with rainbow accent borders */
+html[data-theme="rainbow"] .draft-stat-block {
+  background: #1c1a2c;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+html[data-theme="rainbow"] .draft-stat-block:nth-child(1) { border-left: 3px solid #ff6b8a; }
+html[data-theme="rainbow"] .draft-stat-block:nth-child(2) { border-left: 3px solid #60b0ff; }
+html[data-theme="rainbow"] .draft-stat-block:nth-child(3) { border-left: 3px solid #56e0a0; }
+html[data-theme="rainbow"] .draft-stat-block:nth-child(4) { border-left: 3px solid #ffd060; }
+html[data-theme="rainbow"] #draft-stats-panel { background: #14121e; }
+
+
+/* ─── CURSOR PREVIEW SYNTHETIC ─────────────────────────────────── */
+#cursor-preview-container {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+#cursor-preview-box {
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  caret-color: transparent; /* we show our own */
+  outline: none;
+  min-height: 36px;
+  line-height: 1.5;
+}
+#cursor-preview-caret {
+  position: absolute;
+  background: var(--gold);
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+  pointer-events: none;
+  animation: caretBlink 1.06s step-end infinite;
+  border-radius: 1px;
+  transition: width 0.15s;
+}
+@keyframes caretBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
 </style>
 </head>
 <body>
@@ -1786,6 +2050,8 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
 
 <!-- MASTHEAD -->
 <header id="masthead">
+  <!-- Temp logo dot -->
+  <div id="masthead-dot-logo" onclick="switchTab('home')" title="Home" style="width:28px;height:28px;border-radius:6px;background:var(--gold);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity 0.15s" onmouseenter="this.style.opacity='0.75'" onmouseleave="this.style.opacity='1'"><span style="color:#1a1510;font-weight:700;font-size:0.75rem;font-family:var(--font-mono)">SA</span></div>
   <!-- Story title + switcher -->
   <div id="story-title-wrap" style="position:relative">
     <div id="masthead-title" onclick="editProjectTitle()">Untitled Story</div>
@@ -1794,20 +2060,30 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
   </div>
   <div id="masthead-subtitle" onclick="editProjectSubtitle()">click to add subtitle…</div>
 
-  <!-- Chapter controls -->
+  <!-- Story + Chapter picker -->
   <div id="chapter-selector-wrap">
-    <button class="ch-reorder-btn" id="ch-up-btn" onclick="reorderChapter(-1)" disabled title="Move up">↑</button>
-    <button class="ch-reorder-btn" id="ch-down-btn" onclick="reorderChapter(1)" disabled title="Move down">↓</button>
     <span id="chapter-status-dot"></span>
-    <select id="chapter-select" onchange="selectChapter(this.value)">
-      <option value="">— no chapters yet —</option>
-    </select>
-    <button class="masthead-btn" id="add-chapter-btn" onclick="addChapter()">+ Chapter</button>
+    <div id="story-picker-wrap" style="position:relative">
+      <button id="story-picker-btn" class="masthead-btn story-picker-trigger" onclick="toggleStoryPicker()" style="min-width:180px;max-width:280px;display:flex;align-items:center;justify-content:space-between;gap:0.5rem">
+        <span id="story-picker-label" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left">Select story…</span>
+        <span style="opacity:0.5;flex-shrink:0">▾</span>
+      </button>
+      <div id="story-picker-menu" onclick="event.stopPropagation()" style="display:none;position:fixed;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:var(--radius-lg);box-shadow:0 6px 24px rgba(0,0,0,0.25);min-width:240px;max-width:320px;z-index:9999;overflow:hidden">
+        <div id="story-picker-list"></div>
+        <div style="border-top:1px solid var(--border)">
+          <button id="add-chapter-btn" onclick="addChapter();closeStoryPicker()" style="display:none"></button><!-- hidden compat -->
+          <button onclick="addNewStory();closeStoryPicker()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.85rem;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-body);font-size:0.82rem;cursor:pointer;transition:background 0.1s" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">+ New Story</button>
+        </div>
+      </div>
+    </div>
+    <!-- Hidden select kept for compatibility -->
+    <select id="chapter-select" onchange="selectChapter(this.value)" style="display:none"></select>
   </div>
 
   <!-- Right actions -->
   <div id="masthead-right">
     <span id="autosave-indicator">saved</span>
+    <button class="masthead-btn" title="Home Dashboard" onclick="switchTab('home')" style="font-size:1rem;padding:0.28em 0.6em">⌂</button>
     <button class="masthead-btn" id="beta-mode-btn" onclick="toggleBetaMode()">⬡ Beta Mode</button>
 
     <!-- Export dropdown -->
@@ -1838,12 +2114,9 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
 
 <!-- TAB BAR -->
 <div id="tab-bar-wrap">
-  <div id="author-strip">
-    <span id="strip-name"></span>
-    <span id="strip-tagline"></span>
-  </div>
   <nav id="tab-bar">
     <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">Home</button>
+    <button class="tab-btn" data-tab="stories" onclick="switchTab('stories')">Stories</button>
     <button class="tab-btn" data-tab="summary" onclick="switchTab('summary')">Summary</button>
     <button class="tab-btn" data-tab="draft" onclick="switchTab('draft')">Draft</button>
     <button class="tab-btn" data-tab="flavor" onclick="switchTab('flavor')">Flavor & Friction</button>
@@ -1859,60 +2132,55 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
 <!-- PANELS -->
 <main id="panel-container">
 
-<!-- HOME -->
+<!-- HOME — Global Dashboard -->
 <div class="panel active" id="home-panel">
   <div class="panel-inner">
-    <div id="proj-header-zone" onclick="triggerHeaderImageUpload()">
-      <div id="proj-header-empty"><span class="upload-icon">🖼</span><span>Click to add a cover image</span><span style="font-size:0.72rem;color:var(--text-faint)">Recommended: 1000 × 600 px</span></div>
-      <div id="proj-header-overlay">
-        <button class="header-img-btn change" onclick="event.stopPropagation();triggerHeaderImageUpload()">Change</button>
-        <button class="header-img-btn remove" onclick="event.stopPropagation();removeHeaderImage()">Remove</button>
-      </div>
+    <div class="section-header"><h2 id="home-greeting">Dashboard</h2><span class="section-meta">across all stories</span></div>
+
+    <!-- Global stat row -->
+    <div class="stat-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:1.5rem">
+      <div class="stat-card"><div class="stat-num" id="gstat-stories">0</div><div class="stat-label">Stories</div></div>
+      <div class="stat-card"><div class="stat-num" id="gstat-chapters">0</div><div class="stat-label">Chapters</div></div>
+      <div class="stat-card"><div class="stat-num" id="gstat-words">0</div><div class="stat-label">Total Words</div></div>
+      <div class="stat-card"><div class="stat-num" id="gstat-edits">0</div><div class="stat-label">Open Edits</div></div>
+      <div class="stat-card"><div class="stat-num" id="gstat-streak">0</div><div class="stat-label">Day Streak 🔥</div></div>
     </div>
-    <input type="file" id="header-image-input" accept="image/*" style="display:none" onchange="handleHeaderImageUpload(event)">
-    <div class="section-header"><h2>Project Overview</h2></div>
-    <div class="field-row" style="margin-bottom:1.1rem">
-      <div>
-        <div class="field-group">
-          <label class="field-label">Summary</label>
-          <textarea class="field-textarea" id="proj-summary" placeholder="A brief description…" oninput="saveProjectField('summary',this.value)" rows="3"></textarea>
-        </div>
-        <div class="field-group" style="margin-bottom:0">
-          <label class="field-label">Author Notes</label>
-          <textarea class="field-textarea" id="proj-author-notes" placeholder="Personal notes…" oninput="saveProjectField('authorNotes',this.value)" rows="2"></textarea>
-        </div>
-      </div>
-      <div>
-        <div class="field-group">
-          <label class="field-label">Intended Audience</label>
-          <input type="text" class="field-input" id="proj-audience" placeholder="e.g. Adult literary fiction" oninput="saveProjectField('audience',this.value)">
-        </div>
-        <div class="field-group" style="margin-bottom:0">
-          <label class="field-label">Genre Tags</label>
-          <div class="tag-input-wrap" id="genre-tag-wrap">
-            <input type="text" class="tag-text-input" id="genre-tag-input" placeholder="Add genre, press Enter…" onkeydown="handleTagInput(event,'genre')">
-          </div>
-        </div>
-      </div>
-    </div>
-    <hr class="section-divider">
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num" id="stat-chapters">0</div><div class="stat-label">Chapters</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-words">0</div><div class="stat-label">Total Words</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-edits">0</div><div class="stat-label">Open Edits</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Edits Done</div></div>
-    </div>
-    <div class="section-header"><h2>Chapter Status</h2><span class="section-meta">click a chapter to open it</span></div>
+
+    <!-- Active story spotlight -->
+    <div class="section-header"><h2>Current Story</h2><button class="btn btn-secondary btn-sm" onclick="switchTab('stories')">All Stories →</button></div>
+    <div id="home-story-spotlight" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem"></div>
+
+    <!-- Recent activity: chapter cards for active story -->
+    <div class="section-header"><h2>Chapter Status</h2><span class="section-meta" id="home-chapter-meta">click to open</span></div>
     <div class="chapter-board" id="chapter-board"></div>
-    <div class="writing-goal-section">
-      <div class="section-header" style="margin-bottom:0.7rem"><h2>Writing Goal</h2></div>
+
+    <!-- Writing goal for active story -->
+    <div class="writing-goal-section" style="margin-top:1.5rem">
+      <div class="section-header" style="margin-bottom:0.7rem"><h2>Writing Goal</h2><span class="section-meta" id="home-goal-story-label"></span></div>
       <div class="field-row">
-        <div class="field-group" style="margin-bottom:0"><label class="field-label">Target Word Count</label><input type="number" class="field-input" id="goal-words" placeholder="e.g. 80000" oninput="saveGoal()"></div>
+        <div class="field-group" style="margin-bottom:0"><label class="field-label">Target Words</label><input type="number" class="field-input" id="goal-words" placeholder="e.g. 80000" oninput="saveGoal()"></div>
         <div class="field-group" style="margin-bottom:0"><label class="field-label">Target Date</label><input type="date" class="field-input" id="goal-date" oninput="saveGoal()"></div>
       </div>
       <div class="goal-progress-bar"><div class="goal-progress-fill" id="goal-fill" style="width:0%"></div></div>
       <div class="goal-stats"><span id="goal-current">0 words written</span><span id="goal-pct">Set a target above</span></div>
     </div>
+
+    <!-- Keep these hidden inputs for compatibility -->
+    <input type="file" id="header-image-input" accept="image/*" style="display:none" onchange="handleHeaderImageUpload(event)">
+    <div id="proj-header-zone" style="display:none"><div id="proj-header-empty"></div><div id="proj-header-overlay"></div></div>
+    <input id="proj-summary" style="display:none"><input id="proj-author-notes" style="display:none">
+    <input id="proj-audience" style="display:none">
+    <div id="genre-tag-wrap" style="display:none"><input id="genre-tag-input"></div>
+    <div id="stat-chapters" style="display:none"></div><div id="stat-words" style="display:none"></div>
+    <div id="stat-edits" style="display:none"></div><div id="stat-done" style="display:none"></div>
+  </div>
+</div>
+
+<!-- STORIES -->
+<div class="panel" id="stories-panel">
+  <div class="panel-inner">
+    <div class="section-header"><h2>All Stories</h2><button class="btn btn-primary btn-sm" onclick="addNewStory()">+ New Story</button></div>
+    <div id="stories-panel-list"></div>
   </div>
 </div>
 
@@ -1979,6 +2247,22 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
           <div class="transition-label">→ Into Next Chapter</div>
           <textarea id="summ-transition-out" placeholder="What this chapter leaves open for the next…" oninput="saveSummaryField('transitionOut',this.value)"></textarea>
         </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0">
+      <!-- Inspiration -->
+      <div class="section-header" style="margin-bottom:0.9rem"><h2 style="font-size:0.95rem">✦ Inspiration</h2><span class="section-meta">what sparked this chapter</span></div>
+      <div class="field-group">
+        <label class="field-label">Link — song, image, video, or reference</label>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <input type="url" class="field-input" id="summ-inspo-link" style="flex:1" placeholder="https://youtube.com/watch?v=… or any URL" oninput="saveSummaryField('inspoLink',this.value)">
+          <button class="btn btn-secondary btn-sm" id="summ-inspo-open" onclick="openInspoLink()" title="Open link" style="flex-shrink:0">↗</button>
+        </div>
+        <div id="summ-inspo-preview" style="margin-top:0.5rem;display:none"></div>
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label">How it came to mind</label>
+        <textarea class="field-textarea" id="summ-inspo-note" rows="3" placeholder="The idea behind this chapter — what sparked it, what feeling you were chasing…" oninput="saveSummaryField('inspoNote',this.value)"></textarea>
       </div>
 
     </div>
@@ -2078,6 +2362,15 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
               <button class="tb-flyout-item" id="tb-smart-quotes" onclick="tbToggleSmartQuotes()">Smart Quotes</button>
             </div>
           </div>
+          <!-- Group: Line / Scene Separator -->
+          <div class="tb-group">
+            <button class="tb-btn" onclick="tbToggleFlyout('line',this)" title="Scene separator">&#9135;</button>
+            <div class="tb-flyout" id="tb-flyout-line">
+              <button class="tb-flyout-item" onclick="tbInsertLine('thin');tbCloseFlyout('line')">&#9135; Thin</button>
+              <button class="tb-flyout-item" onclick="tbInsertLine('medium');tbCloseFlyout('line')">&#9473; Medium</button>
+              <button class="tb-flyout-item" onclick="tbInsertLine('dashed');tbCloseFlyout('line')">&#65343;&#65343;&#65343; Dashed</button>
+            </div>
+          </div>
           <div class="tb-divider"></div>
           <!-- Group: Tools -->
           <div class="tb-group">
@@ -2090,7 +2383,16 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
             </div>
           </div>
           <!-- Right side actions -->
-          <div style="margin-left:auto;display:flex;align-items:center;gap:0">
+          <!-- Code mode selector -->
+          <div class="tb-group" id="tb-code-group" style="margin-left:auto">
+            <button class="tb-btn" id="tb-code-btn" onclick="tbToggleFlyout('codemode',this)" title="Code Mode" style="font-family:var(--font-mono);font-size:0.75rem;letter-spacing:0">&lt;/&gt;</button>
+            <div class="tb-flyout" id="tb-flyout-codemode">
+              <button class="tb-flyout-item" id="tb-code-off"  onclick="setCodeMode(null);tbCloseFlyout('codemode')">&#x2715; Prose Mode</button>
+              <button class="tb-flyout-item" id="tb-code-py"   onclick="setCodeMode('python');tbCloseFlyout('codemode')" style="font-family:var(--font-mono)">&#x1F40D; Python / RenPy</button>
+              <button class="tb-flyout-item" id="tb-code-html" onclick="setCodeMode('htmlmixed');tbCloseFlyout('codemode')" style="font-family:var(--font-mono)">&lt;/&gt; HTML</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0">
             <button class="tb-btn tb-save"   id="draft-save-btn"    onclick="saveDraftExplicit()" title="Save">&#128190;</button>
             <button class="tb-btn tb-focus"  id="draft-focus-btn"   onclick="enterFocusMode()"    title="Focus">&#9636;</button>
             <button class="tb-btn tb-sprint" id="sprint-launch-btn" onclick="openSprintTimer()"   title="Sprint">&#9201;</button>
@@ -2111,6 +2413,11 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
 
       <!-- CENTER: Editor -->
       <div id="draft-center">
+        <!-- CODE EDITOR (shown when code mode active) -->
+        <div id="code-editor-wrap">
+          <textarea id="code-editor-textarea"></textarea>
+          <div id="code-lang-badge">prose</div>
+        </div>
         <div id="draft-editor-wrap">
           <div id="draft-editor"></div>
           <div id="draft-empty-invite"><span class="invite-icon">✦</span><p class="invite-line">Write the scene you cannot stop thinking about.</p><span class="invite-hint">click anywhere to begin</span></div>
@@ -2118,6 +2425,7 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
         </div>
         <div class="draft-center-footer">
           <span id="draft-save-hint">Auto-saves as you type · Cmd+S to save</span>
+          <span id="code-word-note" style="display:none">&#9432; Word count excludes code syntax</span>
           <span id="draft-char-count-footer" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-faint)"></span>
         </div>
       </div>
@@ -2292,27 +2600,31 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
   <div class="panel-inner">
     <div class="section-header"><h2>Settings</h2></div>
     <div class="settings-grid">
-      <div class="settings-section" data-beta-ok><h3>Theme</h3><div class="option-row">
+      <div class="settings-section" data-beta-ok style="grid-column:1/-1"><h3>Theme</h3><div class="option-row" style="flex-wrap:wrap;gap:0.4rem">
         <button class="option-btn selected" data-setting="theme" data-value="dark" onclick="setSetting('theme','dark',this)">Dark</button>
         <button class="option-btn" data-setting="theme" data-value="light" onclick="setSetting('theme','light',this)">Light</button>
         <button class="option-btn" data-setting="theme" data-value="cream" onclick="setSetting('theme','cream',this)">Cream</button>
+        <button class="option-btn" data-setting="theme" data-value="purple" onclick="setSetting('theme','purple',this)" style="background:rgba(100,60,160,0.15);border-color:rgba(160,100,220,0.4);color:#b888e8">Purple</button>
+        <button class="option-btn" data-setting="theme" data-value="gray" onclick="setSetting('theme','gray',this)">Gray</button>
+        <button class="option-btn" data-setting="theme" data-value="rainbow" onclick="setSetting('theme','rainbow',this)" style="background:linear-gradient(90deg,rgba(255,107,138,0.2),rgba(255,208,96,0.2),rgba(86,224,160,0.2),rgba(96,176,255,0.2));border-color:rgba(200,150,255,0.4)">Rainbow</button>
       </div></div>
-      <div class="settings-section" data-beta-ok><h3>Font</h3><div class="option-row">
+      <div class="settings-section" data-beta-ok><h3>Font</h3><div class="option-row" style="flex-wrap:wrap;gap:0.4rem">
         <button class="option-btn selected" data-setting="font" data-value="serif" onclick="setSetting('font','serif',this)">Serif</button>
-        <button class="option-btn" data-setting="font" data-value="sans" onclick="setSetting('font','sans',this)">Sans-serif</button>
+        <button class="option-btn" data-setting="font" data-value="sans" onclick="setSetting('font','sans',this)">Sans</button>
         <button class="option-btn" data-setting="font" data-value="dyslexic" onclick="setSetting('font','dyslexic',this)">Dyslexic</button>
+        <button class="option-btn" data-setting="font" data-value="code" onclick="setSetting('font','code',this)" style="font-family:'Fira Code',monospace;font-size:0.78rem">Code</button>
       </div></div>
       <div class="settings-section" data-beta-ok><h3>Cursor Style</h3>
         <div class="option-row" style="margin-bottom:0.85rem">
           <button class="option-btn selected" data-setting="cursor" data-value="normal" onclick="setSetting('cursor','normal',this);updateCursorPreview()">Normal</button>
           <button class="option-btn" data-setting="cursor" data-value="thick" onclick="setSetting('cursor','thick',this);updateCursorPreview()">Thick</button>
         </div>
-        <div style="position:relative;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg-elevated)">
+        <div id="cursor-preview-container">
           <div id="cursor-preview-box" contenteditable="true" spellcheck="false"
-            style="padding:0.55rem 0.75rem;font-family:var(--font-body);font-size:0.9rem;color:var(--text);caret-color:var(--gold);outline:none;min-height:36px;line-height:1.5"
-            onkeydown="if(event.key==='Enter')event.preventDefault()"
-          >Click here — this is your cursor</div>
-
+            onclick="updateCursorPreview()"
+            onkeydown="if(event.key==='Enter')event.preventDefault();updateCursorPreview()"
+          >Click here — watch the cursor</div>
+          <div id="cursor-preview-caret" style="left:8px;width:2px"></div>
           <div style="position:absolute;bottom:0.3rem;right:0.5rem;font-size:0.62rem;color:var(--text-faint);pointer-events:none;font-style:italic">preview</div>
         </div>
       </div>
@@ -2321,9 +2633,23 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
         <button class="option-btn selected" data-setting="fontsize" data-value="md" onclick="setSetting('fontsize','md',this)">Medium</button>
         <button class="option-btn" data-setting="fontsize" data-value="lg" onclick="setSetting('fontsize','lg',this)">Large</button>
       </div></div>
-      <div class="settings-section project-info-section"><h3>Project Info</h3>
-        <div class="field-group" style="margin-bottom:0.65rem"><label class="field-label">Title</label><input type="text" class="field-input" style="width:100%" id="settings-proj-title" placeholder="Project title" oninput="saveProjectField('title',this.value);renderMasthead()"></div>
-        <div class="field-group" style="margin-bottom:0"><label class="field-label">Subtitle</label><input type="text" class="field-input" style="width:100%" id="settings-proj-subtitle" placeholder="Tagline or subtitle" oninput="saveProjectField('subtitle',this.value);renderMasthead()"></div>
+      <div class="settings-section"><h3>Writing Habits</h3>
+        <div class="field-group" style="margin-bottom:0.65rem">
+          <label class="field-label">Daily Word Goal</label>
+          <input type="number" class="field-input" style="width:100%" id="settings-daily-goal" placeholder="e.g. 500" min="0" oninput="saveHabitSetting('dailyGoal',this.value)">
+          <div style="font-size:0.72rem;color:var(--text-faint);margin-top:0.3rem">Words to write per day</div>
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">Session Reminder</label>
+          <div class="option-row" id="reminder-opts">
+            <button class="option-btn" data-reminder="none"   onclick="saveHabitSetting('reminder','none',this)">None</button>
+            <button class="option-btn" data-reminder="gentle" onclick="saveHabitSetting('reminder','gentle',this)">Gentle</button>
+            <button class="option-btn selected" data-reminder="off"    onclick="saveHabitSetting('reminder','off',this)">Off</button>
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-faint);margin-top:0.3rem" id="reminder-desc">Reminder style when you haven't written today</div>
+        </div>
+        <!-- keep hidden compat inputs -->
+        <input type="hidden" id="settings-proj-title"><input type="hidden" id="settings-proj-subtitle">
       </div>
       <div class="data-section"><h3>Data</h3><div class="data-actions">
         <button class="btn btn-secondary" onclick="exportJSON()">Export JSON Backup</button>
@@ -2715,6 +3041,12 @@ html[data-cursor="normal"] #cursor-preview-box { caret-color: var(--gold); }
 <input type="file" id="json-import-input" accept=".json" style="display:none" onchange="handleJSONImport(event)">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script>
 // ============================================
 // STATE — v4 multi-story architecture
@@ -2964,6 +3296,7 @@ function showStoriesDropdown() { switchTab('profile'); }
 // MASTHEAD
 // ============================================
 function renderMasthead() {
+  updatePickerLabel();
   const p = getProject();
   document.getElementById('masthead-title').textContent = p.title || 'Untitled Story';
   document.title = p.title || 'Story Audit Tool';
@@ -3068,6 +3401,7 @@ function selectChapter(id) {
   saveState();
   renderSummaryPanel(); renderFlavorPanel(); renderEditSidebar(); renderImagesPanel(); renderDraftPanel(); renderHomePanel();
   updateTabStates(); updateReorderButtons(); updateChapterStatusChrome();
+  updatePickerLabel();
   if (!state.activeChapterId && !['home','settings','profile','readers','help'].includes(state.activeTab)) switchTab('home', true);
 }
 
@@ -3158,6 +3492,16 @@ function renderHomePanel() {
 }
 
 function goToChapter(id) { state.activeChapterId = id; document.getElementById('chapter-select').value = id; saveState(); selectChapter(id); switchTab('summary', true); }
+function saveHabitSetting(key, val, btn) {
+  if (!state.globalSettings) state.globalSettings = {};
+  state.globalSettings[key] = val;
+  saveState();
+  if (key === 'reminder' && btn) {
+    document.querySelectorAll('[data-reminder]').forEach(function(b){ b.classList.toggle('selected', b.dataset.reminder === val); });
+    var desc = document.getElementById('reminder-desc');
+    if (desc) desc.textContent = val === 'gentle' ? 'Shows a soft prompt in the toolbar when you open the app' : 'No reminders';
+  }
+}
 function saveProjectField(key, val) { getProject()[key] = val; saveState(); if(key==='title'){renderMasthead();renderFooter();} clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(renderHomePanel, 500); }
 function saveGoal() {
   const p = getProject();
@@ -3260,6 +3604,25 @@ function renderSummaryPanel() {
     document.getElementById('summ-target-words').value = ch.targetWords || '';
     document.getElementById('summ-transition-in').value = ch.summary.transitionIn || '';
     document.getElementById('summ-transition-out').value = ch.summary.transitionOut || '';
+    // Inspiration
+    var inspoLink = document.getElementById('summ-inspo-link');
+    var inspoNote = document.getElementById('summ-inspo-note');
+    var inspoPreview = document.getElementById('summ-inspo-preview');
+    if (inspoLink) inspoLink.value = ch.summary.inspoLink || '';
+    if (inspoNote) inspoNote.value = ch.summary.inspoNote || '';
+    if (inspoPreview) {
+      var link = ch.summary.inspoLink || '';
+      if (link) {
+        var ytMatch = link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+        if (ytMatch) {
+          inspoPreview.style.display = 'block';
+          inspoPreview.innerHTML = '<div style="position:relative;padding-bottom:45%;height:0;overflow:hidden;border-radius:var(--radius);margin-top:0.25rem"><iframe src="https://www.youtube.com/embed/'+ytMatch[1]+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:var(--radius)" allowfullscreen></iframe></div>';
+        } else {
+          inspoPreview.style.display = 'block';
+          inspoPreview.innerHTML = '<a href="'+esc(link)+'" target="_blank" rel="noopener" style="font-size:0.8rem;color:var(--blue);word-break:break-all">'+esc(link)+'</a>';
+        }
+      } else { inspoPreview.style.display = 'none'; }
+    }
     renderSceneTracker();
     renderMoodTags();
     updateChapterProgressBar(ch);
@@ -3285,6 +3648,12 @@ function renderSummaryBetaDashboard(ch) {
   `;
 }
 
+function openInspoLink() {
+  var ch = getActiveChapter();
+  var link = (ch && ch.summary.inspoLink) || document.getElementById('summ-inspo-link').value;
+  if (link) window.open(link, '_blank', 'noopener');
+  else toast('Enter a link first', 'info');
+}
 function saveSummaryField(key, val) { const ch=getActiveChapter(); if(!ch)return; ch.summary[key]=val; saveState(); }
 function saveChapterTargetWords(val) { const ch=getActiveChapter(); if(!ch)return; ch.targetWords=parseInt(val)||0; saveState(); updateChapterProgressBar(ch); }
 function updateChapterProgressBar(ch) {
@@ -3390,6 +3759,10 @@ function renderDraftPanel() {
   updateDraftEmptyState();
   applySpellcheck();
   renderDraftStatsPanel();
+  // Code mode: restore per-chapter code mode
+  var _ch = getActiveChapter();
+  if (_ch && _ch.codeMode && _ch.codeMode !== _codeMode) { setTimeout(function(){ setCodeMode(_ch.codeMode); }, 20); }
+  else if ((!_ch || !_ch.codeMode) && _codeMode) { setTimeout(function(){ setCodeMode(null); }, 20); }
   // Start time tracking when chapter loads
   if (state.activeChapterId !== lastChapterIdForTimer) {
     saveDraftTimer(); draftChapterSeconds = 0;
@@ -3687,6 +4060,136 @@ function closeLightbox(){document.getElementById('lightbox').classList.remove('o
 // ============================================
 // TABS
 // ============================================
+function renderHomePanel() {
+  // Global stats across all stories
+  var totalStories = (state.stories||[]).length;
+  var totalChapters = 0, totalWords = 0, totalOpenEdits = 0;
+  (state.stories||[]).forEach(function(s) {
+    var chs = s.chapters||[];
+    totalChapters += chs.length;
+    chs.forEach(function(ch) { totalWords += ch.wordCount||0; totalOpenEdits += (ch.edits||[]).filter(function(e){return e.status==='open';}).length; });
+  });
+  function setEl(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  setEl('gstat-stories', totalStories);
+  setEl('gstat-chapters', totalChapters);
+  setEl('gstat-words', formatNum(totalWords));
+  setEl('gstat-edits', totalOpenEdits);
+  // Streak from profile stats
+  setEl('gstat-streak', calcStreak());
+
+  // Greeting
+  var p = state.profile||{};
+  var greet = document.getElementById('home-greeting');
+  if (greet) greet.textContent = p.name ? 'Hello, ' + p.name.split(' ')[0] : 'Dashboard';
+
+  // Active story spotlight
+  var spotlight = document.getElementById('home-story-spotlight');
+  var story = getActiveStory();
+  if (spotlight && story) {
+    var chs = story.chapters||[];
+    var sWords = chs.reduce(function(a,c){return a+(c.wordCount||0);},0);
+    var sOpen  = chs.reduce(function(a,c){return a+(c.edits||[]).filter(function(e){return e.status==='open';}).length;},0);
+    var sDone  = chs.reduce(function(a,c){return a+(c.edits||[]).filter(function(e){return e.status==='done';}).length;},0);
+    var goal   = (story.project.writingGoal||{}).targetWords||0;
+    var pct    = goal>0?Math.min(100,Math.round(sWords/goal*100)):0;
+    spotlight.innerHTML = '<div style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;color:var(--text)">' + esc(story.project.title||'Untitled') + '</div>' +
+      (story.project.summary?'<div style="font-size:0.85rem;color:var(--text-muted);font-style:italic;margin-bottom:0.75rem">'+esc(story.project.summary)+'</div>':'') +
+      '<div class="home-spotlight-grid">' +
+      '<div class="hsg-stat"><div class="hsg-num">'+chs.length+'</div><div class="hsg-label">Chapters</div></div>' +
+      '<div class="hsg-stat"><div class="hsg-num">'+formatNum(sWords)+'</div><div class="hsg-label">Words</div></div>' +
+      '<div class="hsg-stat"><div class="hsg-num" style="color:var(--rose)">'+sOpen+'</div><div class="hsg-label">Open Edits</div></div>' +
+      '<div class="hsg-stat"><div class="hsg-num" style="color:var(--sage)">'+sDone+'</div><div class="hsg-label">Edits Done</div></div>' +
+      '</div>' +
+      (goal>0?'<div style="margin-top:0.75rem"><div class="goal-progress-bar" style="margin-top:0"><div class="goal-progress-fill" style="width:'+pct+'%"></div></div><div class="goal-stats"><span>'+formatNum(sWords)+' words</span><span>'+pct+'% of '+formatNum(goal)+'</span></div></div>':'');
+  } else if (spotlight) {
+    spotlight.innerHTML = '<div style="color:var(--text-faint);font-style:italic;font-size:0.875rem;text-align:center;padding:0.5rem">No story selected. <a href="#" onclick="addNewStory();return false" style="color:var(--blue)">Create one →</a></div>';
+  }
+
+  // Chapter board for active story
+  var board = document.getElementById('chapter-board');
+  if (!board) return;
+  var meta = document.getElementById('home-chapter-meta');
+  if (!story || !story.chapters||!story.chapters.length) {
+    if (board) board.innerHTML = '<div class="empty-state"><span class="empty-icon">📖</span><p>No chapters yet.</p></div>';
+  } else {
+    if (meta) meta.textContent = (story.project.title||'') + ' — click to open';
+    board.innerHTML = story.chapters.map(function(ch) {
+      var open=(ch.edits||[]).filter(function(e){return e.status==='open';}).length;
+      var done=(ch.edits||[]).filter(function(e){return e.status==='done';}).length;
+      return '<div class="chapter-card '+(ch.id===state.activeChapterId?'active-chapter':'')+'" onclick="goToChapter('+JSON.stringify(ch.id)+')">' +
+        '<div class="chapter-card-title">'+esc(ch.title)+'</div>' +
+        (ch.subtitle?'<div class="chapter-card-subtitle">'+esc(ch.subtitle)+'</div>':'') +
+        '<div class="chapter-card-meta"><span class="status-badge '+(ch.status||'draft')+'">'+(ch.status||'draft')+'</span>' +
+        (open+done>0?'<span class="edit-progress-pill">'+done+'/'+(open+done)+' edits</span>':'')+
+        (ch.wordCount>0?'<span class="word-count-pill">'+formatNum(ch.wordCount)+'w</span>':'')+
+        '</div></div>';
+    }).join('');
+  }
+
+  // Writing goal
+  var g=(story&&story.project.writingGoal)||{};
+  var gwEl=document.getElementById('goal-words'); if(gwEl)gwEl.value=g.targetWords||'';
+  var gdEl=document.getElementById('goal-date');  if(gdEl)gdEl.value=g.targetDate||'';
+  var sWds=(story&&story.chapters||[]).reduce(function(a,c){return a+(c.wordCount||0);},0);
+  var tgt=g.targetWords||0;
+  var gp=tgt>0?Math.min(100,Math.round(sWds/tgt*100)):0;
+  var gf=document.getElementById('goal-fill');if(gf)gf.style.width=gp+'%';
+  var gc=document.getElementById('goal-current');if(gc)gc.textContent=formatNum(sWds)+' words written';
+  var gpc=document.getElementById('goal-pct');if(gpc)gpc.textContent=tgt>0?gp+'% of '+formatNum(tgt):'Set a target above';
+  var gl=document.getElementById('home-goal-story-label');if(gl&&story)gl.textContent=story.project.title||'';
+}
+
+function renderStoriesPanel() {
+  var el = document.getElementById('stories-panel-list');
+  if (!el) return;
+  var stories = state.stories||[];
+  if (!stories.length) {
+    el.innerHTML = '<div class="empty-state"><span class="empty-icon">📚</span><p>No stories yet. <a href="#" onclick="addNewStory();return false" style="color:var(--blue)">Create one →</a></p></div>';
+    return;
+  }
+  el.innerHTML = stories.map(function(story) {
+    var isActive = story.id === state.activeStoryId;
+    var chs = story.chapters||[];
+    var words = chs.reduce(function(a,c){return a+(c.wordCount||0);},0);
+    var openEdits = chs.reduce(function(a,c){return a+(c.edits||[]).filter(function(e){return e.status==='open';}).length;},0);
+    var doneEdits = chs.reduce(function(a,c){return a+(c.edits||[]).filter(function(e){return e.status==='done';}).length;},0);
+    var goal = (story.project.writingGoal||{}).targetWords||0;
+    var pct  = goal>0?Math.min(100,Math.round(words/goal*100)):0;
+    var statusCounts = {};
+    chs.forEach(function(c){statusCounts[c.status||'draft']=(statusCounts[c.status||'draft']||0)+1;});
+
+    var chRows = chs.map(function(ch) {
+      var chOpen=(ch.edits||[]).filter(function(e){return e.status==='open';}).length;
+      var statusColors={outline:'var(--blue)',draft:'var(--gold)',revision:'var(--rose)',complete:'var(--sage)'};
+      return '<div class="spc-ch-row" onclick="switchStory('+JSON.stringify(story.id)+');selectChapter('+JSON.stringify(ch.id)+');switchTab(\'summary\')">' +
+        '<span class="spc-ch-status status-badge '+(ch.status||'draft')+'">'+(ch.status||'draft').slice(0,3).toUpperCase()+'</span>' +
+        '<span style="flex:1">'+esc(ch.title||'Untitled Chapter')+'</span>' +
+        (chOpen>0?'<span class="spc-ch-edits">'+chOpen+' edit'+(chOpen>1?'s':'')+'</span>':'')+
+        '<span class="spc-ch-words">'+formatNum(ch.wordCount||0)+'w</span>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="stories-panel-card'+(isActive?' is-active':'')+'">' +
+      '<div class="spc-header" onclick="switchStory('+JSON.stringify(story.id)+');switchTab(\'home\')">' +
+        '<span class="spc-title">'+esc(story.project.title||'Untitled')+'</span>' +
+        (isActive?'<span class="spc-active-badge">Active</span>':'')+
+        '<button class="btn btn-secondary btn-sm spc-open-btn" onclick="event.stopPropagation();switchStory('+JSON.stringify(story.id)+');switchTab(\'home\')">Open →</button>' +
+      '</div>' +
+      '<div class="spc-stats">' +
+        '<div class="spc-stat"><div class="spc-stat-num">'+chs.length+'</div><div class="spc-stat-label">Chapters</div></div>' +
+        '<div class="spc-stat"><div class="spc-stat-num">'+formatNum(words)+'</div><div class="spc-stat-label">Words</div></div>' +
+        '<div class="spc-stat"><div class="spc-stat-num" style="color:var(--rose)">'+openEdits+'</div><div class="spc-stat-label">Open Edits</div></div>' +
+        '<div class="spc-stat"><div class="spc-stat-num" style="color:var(--sage)">'+doneEdits+'</div><div class="spc-stat-label">Done</div></div>' +
+        '<div class="spc-stat spc-progress-wrap">' +
+          (goal>0?'<div class="spc-progress-bar"><div class="spc-progress-fill" style="width:'+pct+'%"></div></div><div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.2rem">'+pct+'% of '+formatNum(goal)+'</div>':'<div style="font-size:0.75rem;color:var(--text-faint)">No goal set</div>') +
+        '</div>' +
+      '</div>' +
+      (chs.length?'<div class="spc-chapters-list">'+chRows+'</div>':'') +
+      '</div>';
+  }).join('');
+}
+
+
 function switchTab(tabName, silent) {
   const always = ['home','settings','profile','help','readers'];
   if (!state.activeChapterId && !always.includes(tabName)) {
@@ -3705,6 +4208,7 @@ function switchTab(tabName, silent) {
   else if(tabName==='profile')renderProfilePanel();
   else if(tabName==='continuity'){renderContinuityPanel();}
   else if(tabName==='settings'){setTimeout(updateCursorPreview,50);}
+  else if(tabName==='stories')renderStoriesPanel();
   updateFloatToolbar();
   updateChapterStatusChrome();
   if (tabName === 'draft') { startDraftTimer(); renderDraftStatsPanel(); startStatsAutoRefresh(); }
@@ -5293,22 +5797,31 @@ function stopStatsAutoRefresh() {
 }
 
 function updateCursorPreview() {
-  var box = document.getElementById('cursor-preview-box');
-  var synth = document.getElementById('cursor-preview-synth');
-  if (!box) return;
-  var thick = (getActiveStory().settings.cursor || 'normal') === 'thick';
-
-  box.style.caretColor = thick ? 'transparent' : 'var(--gold)';
+  var box   = document.getElementById('cursor-preview-box');
+  var caret = document.getElementById('cursor-preview-caret');
+  if (!box || !caret) return;
+  var thick = ((getActiveStory() && getActiveStory().settings || {}).cursor || 'normal') === 'thick';
+  // Set synthetic caret width
+  caret.style.width = thick ? '3px' : '1.5px';
+  // Position: after last character using Range
   box.focus();
-  // Move cursor to end
-  var r = document.createRange();
-  var s = window.getSelection();
-  r.selectNodeContents(box);
-  r.collapse(false);
-  s.removeAllRanges();
-  s.addRange(r);
-
-  // Preview: CSS caret-width handles thick cursor styling.
+  var range = document.createRange();
+  range.selectNodeContents(box);
+  range.collapse(false);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  // Get rect of cursor position
+  var rects = range.getClientRects();
+  var boxRect = box.getBoundingClientRect();
+  var containerRect = document.getElementById('cursor-preview-container').getBoundingClientRect();
+  if (rects.length > 0) {
+    caret.style.left = (rects[0].left - containerRect.left) + 'px';
+    caret.style.top  = (rects[0].top  - containerRect.top + rects[0].height/2) + 'px';
+  } else {
+    caret.style.left = (boxRect.left - containerRect.left + 8) + 'px';
+    caret.style.top  = '50%';
+  }
 }
 
 // ─── SYNTHETIC THICK CURSOR ──────────────────────────────────────
@@ -5323,6 +5836,264 @@ function applySyntheticCursor() {
   if (!quillEditor) return;
   quillEditor.root.style.caretColor = 'var(--gold)';
 }
+
+// ─── STORY PICKER ────────────────────────────────────────────────
+function toggleStoryPicker() {
+  var menu = document.getElementById('story-picker-menu');
+  if (!menu) return;
+  if (menu.style.display === 'none' || !menu.style.display) {
+    openStoryPicker();
+  } else {
+    closeStoryPicker();
+  }
+}
+
+function openStoryPicker() {
+  var menu = document.getElementById('story-picker-menu');
+  var btn  = document.getElementById('story-picker-btn');
+  if (!menu || !btn) return;
+  buildStoryPicker();
+  var rect = btn.getBoundingClientRect();
+  menu.style.top  = (rect.bottom + 4) + 'px';
+  menu.style.left = rect.left + 'px';
+  menu.style.display = 'block';
+}
+
+function closeStoryPicker() {
+  var menu = document.getElementById('story-picker-menu');
+  if (menu) menu.style.display = 'none';
+}
+
+function buildStoryPicker() {
+  var list = document.getElementById('story-picker-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  (state.stories || []).forEach(function(story) {
+    var isActive = story.id === state.activeStoryId;
+    var chs = story.chapters || [];
+    var multi = chs.length > 1;
+
+    // Story row
+    var row = document.createElement('div');
+    row.className = 'sp-story-row' + (isActive ? ' active-story' : '');
+    row.innerHTML = '<span class="sp-story-name">' + esc(story.project.title || 'Untitled') + '</span>' +
+      (multi ? '<span class="sp-story-chevron">▼</span>' : '');
+
+    if (multi) {
+      // Toggle expand/collapse of chapter section
+      var chSection = document.createElement('div');
+      chSection.className = 'sp-chapters' + (isActive ? ' open' : '');
+      chSection.id = 'sp-chs-' + story.id;
+
+      // Sort chapters by position (array order = oldest first)
+      chs.forEach(function(ch) {
+        var activeCh = isActive && ch.id === state.activeChapterId;
+        var chRow = document.createElement('div');
+        chRow.className = 'sp-chapter-row' + (activeCh ? ' active' : '');
+        chRow.innerHTML = '<span class="sp-chapter-dot"></span><span>' + esc(ch.title || 'Untitled Chapter') + '</span>';
+        chRow.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (story.id !== state.activeStoryId) switchStory(story.id);
+          selectChapter(ch.id);
+          updatePickerLabel();
+          closeStoryPicker();
+        });
+        chSection.appendChild(chRow);
+      });
+
+      // + Add Chapter row
+      var addRow = document.createElement('div');
+      addRow.className = 'sp-chapter-row sp-add-chapter';
+      addRow.innerHTML = '<span style="color:var(--text-faint)">+</span><span style="color:var(--text-faint);font-size:0.78rem">Add Chapter</span>';
+      addRow.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (story.id !== state.activeStoryId) switchStory(story.id);
+        closeStoryPicker();
+        addChapter();
+      });
+      chSection.appendChild(addRow);
+
+      // Story row click toggles chapter section
+      row.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = chSection.classList.contains('open');
+        chSection.classList.toggle('open');
+        var ch = row.querySelector('.sp-story-chevron');
+        if (ch) ch.textContent = open ? '▶' : '▼';
+        if (story.id !== state.activeStoryId) switchStory(story.id);
+      });
+
+      list.appendChild(row);
+      list.appendChild(chSection);
+    } else {
+      // Single or no chapters — click goes directly to story
+      row.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (story.id !== state.activeStoryId) switchStory(story.id);
+        if (chs.length === 1) selectChapter(chs[0].id);
+        updatePickerLabel();
+        closeStoryPicker();
+      });
+      list.appendChild(row);
+    }
+  });
+}
+
+function updatePickerLabel() {
+  var lbl = document.getElementById('story-picker-label');
+  if (!lbl) return;
+  var story = getActiveStory();
+  if (!story) { lbl.textContent = 'Select story…'; return; }
+  var chs = story.chapters || [];
+  var title = story.project.title || 'Untitled';
+  var ch = chs.find(function(c) { return c.id === state.activeChapterId; });
+  lbl.textContent = (chs.length > 1 && ch) ? title + ' — ' + (ch.title || 'Ch.') : title;
+}
+
+// Close picker on outside click
+document.addEventListener('click', function(e) {
+  var menu = document.getElementById('story-picker-menu');
+  var btn  = document.getElementById('story-picker-btn');
+  if (menu && menu.style.display !== 'none') {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+      closeStoryPicker();
+    }
+  }
+});
+
+
+// ─── CODE EDITOR MODE ────────────────────────────────────────────
+var cmEditor = null;         // CodeMirror instance
+var _codeMode = null;        // null | 'python' | 'htmlmixed'
+
+function setCodeMode(mode) {
+  var ch = getActiveChapter();
+  if (!ch) { toast('Select a chapter first', 'error'); return; }
+
+  // Save current content before switching
+  if (_codeMode && cmEditor) {
+    ch.codeDraft = cmEditor.getValue();
+    ch.codeMode  = _codeMode;
+  } else if (!_codeMode && quillEditor) {
+    ch.draft = quillEditor.root.innerHTML;
+    ch.wordCount = countWords(quillEditor.getText().trim());
+  }
+  saveState();
+
+  _codeMode = mode;
+  if (ch) ch.codeMode = mode;  // persist per chapter
+
+  var prose = document.getElementById('draft-editor-wrap');
+  var codeWrap = document.getElementById('code-editor-wrap');
+  var badge = document.getElementById('code-lang-badge');
+  var codeNote = document.getElementById('code-word-note');
+  var codeBtn = document.getElementById('tb-code-btn');
+  var topTb = document.getElementById('draft-top-toolbar');
+
+  if (mode) {
+    // Switch to code mode
+    if (prose) prose.classList.add('code-mode-on');
+    if (codeWrap) codeWrap.classList.add('active');
+    if (codeNote) codeNote.style.display = '';
+    if (codeBtn) { codeBtn.style.color = 'var(--gold)'; codeBtn.classList.add('tb-active'); }
+    if (badge) badge.textContent = mode === 'python' ? 'Python / RenPy' : 'HTML';
+    // Dim prose toolbar groups
+    if (topTb) topTb.querySelectorAll('.tb-group:not(#tb-code-group)').forEach(function(g) { g.style.opacity = '0.35'; g.style.pointerEvents = 'none'; });
+
+    if (!cmEditor) {
+      // Init CodeMirror on first use
+      var ta = document.getElementById('code-editor-textarea');
+      var isDark = ['dark','purple','rainbow'].includes((getActiveStory().settings||{}).theme || 'dark');
+      cmEditor = CodeMirror.fromTextArea(ta, {
+        mode: mode,
+        theme: isDark ? 'dracula' : 'eclipse',
+        lineNumbers: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false,
+        lineWrapping: true,
+        extraKeys: {
+          // Auto double-quotes
+          '"': function(cm) {
+            var sel = cm.getSelection();
+            if (sel) { cm.replaceSelection('"' + sel + '"'); }
+            else { cm.replaceRange('""', cm.getCursor()); cm.setCursor({line: cm.getCursor().line, ch: cm.getCursor().ch - 1}); }
+          }
+        }
+      });
+      cmEditor.on('change', function() {
+        var rawText = cmEditor.getValue();
+        // Word count: strip Python/RenPy keywords and symbols
+        var stripped = rawText
+          .replace(/#.*/g, '')           // comments
+          .replace(/[_a-z][_a-z0-9]*/gi, function(m) {
+            var keywords = 'label jump call if elif else menu show hide scene play stop define default return pass import from class def True False None and or not in is'.split(' ');
+            return keywords.indexOf(m) >= 0 ? ' ' : m;
+          })
+          .replace(/[{}()\[\]:=+\-*\/\.,<>!@#$%^&|~`]/g, ' ')
+          .replace(/\s+/g, ' ').trim();
+        var wc = countWords(stripped);
+        var el = document.getElementById('draft-word-count'); if (el) el.textContent = formatNum(wc);
+        var dsp = document.getElementById('dsp-words'); if (dsp) dsp.textContent = formatNum(wc);
+        // Auto-save
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(function() {
+          var c = getActiveChapter();
+          if (c) { c.codeDraft = cmEditor.getValue(); c.wordCount = wc; saveState(); renderHomePanel(); }
+        }, 800);
+      });
+    } else {
+      cmEditor.setOption('mode', mode);
+      var isDark2 = ['dark','purple','rainbow'].includes((getActiveStory().settings||{}).theme || 'dark');
+      cmEditor.setOption('theme', isDark2 ? 'dracula' : 'eclipse');
+    }
+    // Load saved code draft or convert prose
+    var code = ch.codeDraft || '';
+    cmEditor.setValue(code);
+    setTimeout(function() { cmEditor.refresh(); cmEditor.focus(); }, 50);
+
+  } else {
+    // Switch back to prose mode
+    if (prose) prose.classList.remove('code-mode-on');
+    if (codeWrap) codeWrap.classList.remove('active');
+    if (codeNote) codeNote.style.display = 'none';
+    if (codeBtn) { codeBtn.style.color = ''; codeBtn.classList.remove('tb-active'); }
+    if (badge) badge.textContent = 'prose';
+    if (topTb) topTb.querySelectorAll('.tb-group:not(#tb-code-group)').forEach(function(g) { g.style.opacity = ''; g.style.pointerEvents = ''; });
+    if (cmEditor && ch) { ch.codeDraft = cmEditor.getValue(); saveState(); }
+    renderDraftPanel();
+  }
+
+  // Sync toolbar flyout active states
+  ['tb-code-off','tb-code-py','tb-code-html'].forEach(function(id) { var b=document.getElementById(id); if(b) b.classList.remove('tb-active'); });
+  var activeBtn = mode === 'python' ? 'tb-code-py' : mode === 'htmlmixed' ? 'tb-code-html' : 'tb-code-off';
+  var ab = document.getElementById(activeBtn); if (ab) ab.classList.add('tb-active');
+
+  renderDraftStatsPanel();
+}
+
+function initCodeModeForChapter() {
+  // When switching chapters, restore code mode if it was active
+  var ch = getActiveChapter();
+  if (ch && ch.codeMode && ch.codeMode !== _codeMode) {
+    setCodeMode(ch.codeMode);
+  } else if ((!ch || !ch.codeMode) && _codeMode) {
+    setCodeMode(null);
+  }
+}
+
+// Update CodeMirror theme when settings change
+var _origApplySettings = applySettings;
+applySettings = function() {
+  _origApplySettings();
+  if (cmEditor) {
+    var isDark = ['dark','purple','rainbow'].includes((getActiveStory().settings||{}).theme || 'dark');
+    cmEditor.setOption('theme', isDark ? 'dracula' : 'eclipse');
+  }
+};
 
 // ─── TOOLBAR FLYOUT HELPERS ──────────────────────────────────────
 function tbToggleFlyout(name, triggerBtn) {
@@ -5396,6 +6167,28 @@ var _tbFont = 'serif';
 var _tbSize = null;  // null = normal
 var _tbAlignCycle = [null, 'center', 'right', 'justify'];
 var _tbAlignIdx = 0;
+
+function tbInsertLine(style) {
+  if (!quillEditor) return;
+  var sel = quillEditor.getSelection(true);
+  var idx = sel ? sel.index + sel.length : quillEditor.getLength() - 1;
+
+  // Move to end of current line
+  var text = quillEditor.getText();
+  while (idx < text.length && text[idx] !== '\n') idx++;
+
+  quillEditor.setSelection(idx, 0);
+
+  // Insert line break + hr + line break as HTML
+  var hrHtml = '<p><br></p><hr class="scene-sep sep-' + style + '"><p><br></p>';
+  quillEditor.clipboard.dangerouslyPasteHTML(idx, hrHtml);
+
+  // Move cursor past the separator
+  setTimeout(function() {
+    var newLen = quillEditor.getLength();
+    quillEditor.setSelection(Math.min(idx + 3, newLen - 1), 0);
+  }, 10);
+}
 
 function tbToggle(format) {
   if (!quillEditor) return;
